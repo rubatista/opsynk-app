@@ -1,75 +1,90 @@
-# Nuxt Minimal Starter
+# 📦 Opsynk App
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+## 🧭 Plano: Estrutura Frontoffice / Backoffice + Backend
 
-## Setup
+### 📌 Estado atual
 
-Make sure to install dependencies:
+- **Stack:** Nuxt 3, Tailwind CSS, Pinia, VueUse\
+- **Autenticação:** Já implementada (store + middleware)\
+- **Páginas existentes:**
+  - `login.vue`
+  - `dashboard.vue`
+- **Backend:**
+  - O ficheiro `stores/auth.ts` já chama:
+    http://localhost:3000/auth/login
+  - ⚠️ Ainda não existe API implementada em `server/`
 
-```bash
-# npm
-npm install
+---
 
-# pnpm
-pnpm install
+## 📁 Estrutura de pastas
 
-# yarn
-yarn install
+    opsynk-app/
+    ├── components/
+    │   ├── common/
+    ├── pages/
+    │   ├── index.vue
+    │   ├── login.vue
+    │   ├── produtos.vue
+    │   └── backoffice/
+    │       ├── dashboard.vue
+    │       ├── produtos/
+    │       └── paginas/
+    ├── layouts/
+    │   ├── default.vue
+    │   └── backoffice.vue
+    ├── server/
+    │   ├── api/
 
-# bun
-bun install
-```
+---
 
-## Development Server
+## 🛣️ Rotas
 
-Start the development server on `http://localhost:3000`:
+- Frontoffice: `/`, `/produtos`
+- Backoffice: `/backoffice/*`
 
-```bash
-# npm
-npm run dev
+---
 
-# pnpm
-pnpm dev
+## 🔐 Auth
 
-# yarn
-yarn dev
+- Middleware protege `/backoffice/*`
+- Redireciona para `/login` se necessário
 
-# bun
-bun run dev
-```
+---
 
-## Production
+## ⚙️ Backend
 
-Build the application for production:
+- Usar Nitro (`server/api/`)
+- ORM: Drizzle
+- DB:
+  - SQLite (dev)
+  - PostgreSQL (prod)
 
-```bash
-# npm
-npm run build
+---
 
-# pnpm
-pnpm build
+## 🔌 APIs
 
-# yarn
-yarn build
+### Auth
 
-# bun
-bun run build
-```
+- POST `/api/auth/login`
 
-Locally preview production build:
+### Produtos
 
-```bash
-# npm
-npm run preview
+- GET `/api/products`
+- GET `/api/products/:id`
+- POST `/api/products`
+- PUT `/api/products/:id`
+- DELETE `/api/products/:id`
 
-# pnpm
-pnpm preview
+### CMS
 
-# yarn
-yarn preview
+- GET `/api/pages/:slug`
+- PUT `/api/pages/:slug`
 
-# bun
-bun run preview
-```
+---
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+## 🚀 Próximos passos
+
+- Implementar backend
+- Criar modelos DB
+- Construir CRUD no backoffice
+- Integrar frontend com API
