@@ -9,13 +9,14 @@ export const useAuthStore = defineStore('auth', {
   actions: {
     async login(email: string, password: string) {
       try {
-        const { data } = await useFetch('http://localhost:3000/auth/login', {
+        const { data } = await useFetch('/api/auth/login', {
           method: 'POST',
           body: { email, password },
         })
 
         if (data.value?.access_token) {
           this.token = data.value.access_token
+          this.user = data.value.user
           return true
         }
 

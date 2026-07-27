@@ -1,0 +1,36 @@
+import { sqliteTable, text, integer, real } from 'drizzle-orm/sqlite-core'
+import { sql } from 'drizzle-orm'
+
+export const users = sqliteTable('users', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  email: text('email').notNull().unique(),
+  passwordHash: text('password_hash').notNull(),
+  name: text('name'),
+  createdAt: text('created_at').notNull().default(sql`(current_timestamp)`),
+})
+
+export const products = sqliteTable('products', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  name: text('name').notNull(),
+  description: text('description'),
+  price: real('price').notNull(),
+  stock: integer('stock').notNull().default(0),
+  brand: text('brand'),
+  model: text('model'),
+  capacityKg: integer('capacity_kg'),
+  energyType: text('energy_type'),
+  year: integer('year'),
+  listingType: text('listing_type').notNull().default('venda'),
+  createdAt: text('created_at').notNull().default(sql`(current_timestamp)`),
+  updatedAt: text('updated_at').notNull().default(sql`(current_timestamp)`),
+})
+
+export const productImages = sqliteTable('product_images', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  productId: integer('product_id')
+    .notNull()
+    .references(() => products.id, { onDelete: 'cascade' }),
+  url: text('url').notNull(),
+  position: integer('position').notNull().default(0),
+  createdAt: text('created_at').notNull().default(sql`(current_timestamp)`),
+})

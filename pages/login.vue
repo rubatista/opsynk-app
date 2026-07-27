@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useAuthStore } from '~/stores/auth'
 
+definePageMeta({ layout: false })
+
 const auth = useAuthStore()
 const email = ref('')
 const password = ref('')
@@ -8,7 +10,7 @@ const password = ref('')
 const handleLogin = async () => {
   const success = await auth.login(email.value, password.value)
   if (success) {
-    navigateTo('/dashboard')
+    navigateTo('/backoffice/dashboard')
   } else {
     alert('Falha no login')
   }
