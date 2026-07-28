@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import BaseButton from '~/components/atoms/BaseButton.vue'
-import BaseBadge from '~/components/atoms/BaseBadge.vue'
+import BaseButton from '~/components/atoms/BaseButton/BaseButton.vue'
+import BaseBadge from '~/components/atoms/BaseBadge/BaseBadge.vue'
 
-definePageMeta({ layout: 'backoffice' })
+definePageMeta({ layout: 'backoffice', title: 'Produtos' })
 
 const { data: products, refresh } = await useFetch('/api/products')
 
@@ -16,14 +16,14 @@ const removeProduct = async (id: number) => {
 <template>
   <div>
     <div class="flex items-center justify-between mb-6">
-      <h1 class="text-2xl font-bold">Produtos</h1>
-      <BaseButton to="/backoffice/produtos/novo">+ Novo Produto</BaseButton>
+      <h1 class="text-2xl font-bold dark:text-white">Produtos</h1>
+      <BaseButton to="/backoffice/produtos/novo" variant="brand">+ Novo Produto</BaseButton>
     </div>
 
-    <p v-if="!products?.length" class="text-gray-500">Ainda não há produtos.</p>
+    <p v-if="!products?.length" class="text-gray-500 dark:text-gray-400">Ainda não há produtos.</p>
 
-    <table v-else class="w-full bg-white border border-gray-200 rounded-xl overflow-hidden text-sm">
-      <thead class="bg-gray-50 text-left text-gray-500">
+    <table v-else class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden text-sm">
+      <thead class="bg-gray-50 dark:bg-gray-800 text-left text-gray-500 dark:text-gray-400">
         <tr>
           <th class="px-4 py-3">Nome</th>
           <th class="px-4 py-3">Marca</th>
@@ -35,7 +35,7 @@ const removeProduct = async (id: number) => {
         </tr>
       </thead>
       <tbody>
-        <tr v-for="product in products" :key="product.id" class="border-t border-gray-100">
+        <tr v-for="product in products" :key="product.id" class="border-t border-gray-100 dark:border-gray-800 text-gray-900 dark:text-gray-100">
           <td class="px-4 py-3">{{ product.name }}</td>
           <td class="px-4 py-3">{{ product.brand || '—' }}</td>
           <td class="px-4 py-3">{{ product.model || '—' }}</td>
@@ -47,7 +47,7 @@ const removeProduct = async (id: number) => {
           <td class="px-4 py-3">{{ product.price.toFixed(2) }} €</td>
           <td class="px-4 py-3">{{ product.stock }}</td>
           <td class="px-4 py-3 text-right space-x-3">
-            <NuxtLink :to="`/backoffice/produtos/${product.id}`" class="text-indigo-600 hover:underline">
+            <NuxtLink :to="`/backoffice/produtos/${product.id}`" class="text-brand-500 hover:underline">
               Editar
             </NuxtLink>
             <button class="text-red-600 hover:underline" @click="removeProduct(product.id)">

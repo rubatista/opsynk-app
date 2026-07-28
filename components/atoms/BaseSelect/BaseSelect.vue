@@ -10,11 +10,11 @@ const model = defineModel<string>()
 
 <template>
   <div>
-    <label v-if="label" class="text-sm block mb-1">{{ label }}</label>
+    <label v-if="label" class="text-sm block mb-1 dark:text-gray-300">{{ label }}</label>
     <select
       v-model="model"
       :required="required"
-      class="w-full p-2 border border-gray-300 rounded-lg text-sm bg-white"
+      class="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-lg text-sm bg-white dark:bg-gray-900 dark:text-gray-100"
     >
       <option v-for="opt in options" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
     </select>

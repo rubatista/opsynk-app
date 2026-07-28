@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import BaseInput from '~/components/atoms/BaseInput.vue'
-import BaseSelect from '~/components/atoms/BaseSelect.vue'
-import BaseButton from '~/components/atoms/BaseButton.vue'
+import BaseInput from '~/components/atoms/BaseInput/BaseInput.vue'
+import BaseSelect from '~/components/atoms/BaseSelect/BaseSelect.vue'
+import BaseButton from '~/components/atoms/BaseButton/BaseButton.vue'
+import BaseCard from '~/components/atoms/BaseCard/BaseCard.vue'
 
-definePageMeta({ layout: 'backoffice' })
+definePageMeta({ layout: 'backoffice', title: 'Novo Produto' })
 
 const name = ref('')
 const description = ref('')
@@ -15,6 +16,8 @@ const capacityKg = ref<number | null>(null)
 const year = ref<number | null>(null)
 const energyType = ref('eletrico')
 const listingType = ref('venda')
+const metaTitle = ref('')
+const metaDescription = ref('')
 const error = ref('')
 
 const energyOptions = [
@@ -43,6 +46,8 @@ const submit = async () => {
         year: year.value,
         energyType: energyType.value,
         listingType: listingType.value,
+        metaTitle: metaTitle.value || null,
+        metaDescription: metaDescription.value || null,
       },
     })
     navigateTo('/backoffice/produtos')
@@ -54,7 +59,7 @@ const submit = async () => {
 
 <template>
   <div class="max-w-md">
-    <h1 class="text-2xl font-bold mb-6">Novo Empilhador</h1>
+    <h1 class="text-2xl font-bold mb-6 dark:text-white">Novo Empilhador</h1>
 
     <form class="space-y-4" @submit.prevent="submit">
       <BaseInput v-model="name" label="Nome" required />
@@ -76,10 +81,24 @@ const submit = async () => {
         <BaseInput v-model.number="stock" label="Stock" type="number" />
       </div>
 
-      <p v-if="error" class="text-sm text-red-600">{{ error }}</p>
+      <BaseCard>
+        <h2 class="font-semibold text-sm mb-3 dark:text-white">SEO</h2>
+        <div class="space-y-3">
+          <div>
+            <BaseInput v-model="metaTitle" label="Meta Título" placeholder="Deixar em branco para usar o nome do produto" />
+            <p class="text-xs text-gray-400 mt-1">Recomendado até ~60 caracteres.</p>
+          </div>
+          <div>
+            <BaseInput v-model="metaDescription" label="Meta Descrição" multiline placeholder="Deixar em branco para usar a descrição do produto" />
+            <p class="text-xs text-gray-400 mt-1">Recomendado até ~160 caracteres.</p>
+          </div>
+        </div>
+      </BaseCard>
+
+      <p v-if="error" class="text-sm text-red-600 dark:text-red-400">{{ error }}</p>
 
       <div class="flex gap-3">
-        <BaseButton type="submit">Guardar</BaseButton>
+        <BaseButton type="submit" variant="brand">Guardar</BaseButton>
         <BaseButton to="/backoffice/produtos" variant="secondary">Cancelar</BaseButton>
       </div>
     </form>

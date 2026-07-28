@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ServicosSection from '~/components/sections/ServicosSection.vue'
+import ServicosSection from '~/components/sections/ServicosSection/ServicosSection.vue'
 </script>
 
 <template>

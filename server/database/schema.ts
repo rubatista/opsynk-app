@@ -21,6 +21,8 @@ export const products = sqliteTable('products', {
   energyType: text('energy_type'),
   year: integer('year'),
   listingType: text('listing_type').notNull().default('venda'),
+  metaTitle: text('meta_title'),
+  metaDescription: text('meta_description'),
   createdAt: text('created_at').notNull().default(sql`(current_timestamp)`),
   updatedAt: text('updated_at').notNull().default(sql`(current_timestamp)`),
 })
@@ -32,5 +34,24 @@ export const productImages = sqliteTable('product_images', {
     .references(() => products.id, { onDelete: 'cascade' }),
   url: text('url').notNull(),
   position: integer('position').notNull().default(0),
+  createdAt: text('created_at').notNull().default(sql`(current_timestamp)`),
+})
+
+export const siteSettings = sqliteTable('site_settings', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  metaTitle: text('meta_title'),
+  metaDescription: text('meta_description'),
+  ogImage: text('og_image'),
+  updatedAt: text('updated_at').notNull().default(sql`(current_timestamp)`),
+})
+
+export const maintenances = sqliteTable('maintenances', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  productId: integer('product_id')
+    .notNull()
+    .references(() => products.id, { onDelete: 'cascade' }),
+  performedAt: text('performed_at').notNull(),
+  description: text('description').notNull(),
+  nextDueDate: text('next_due_date'),
   createdAt: text('created_at').notNull().default(sql`(current_timestamp)`),
 })

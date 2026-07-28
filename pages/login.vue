@@ -1,91 +1,104 @@
 <script setup lang="ts">
 import { useAuthStore } from '~/stores/auth'
+import BaseButton from '~/components/atoms/BaseButton/BaseButton.vue'
 
 definePageMeta({ layout: false })
 
 const auth = useAuthStore()
 const email = ref('')
 const password = ref('')
+const showPassword = ref(false)
+const error = ref('')
+const loading = ref(false)
 
 const handleLogin = async () => {
+  error.value = ''
+  loading.value = true
   const success = await auth.login(email.value, password.value)
+  loading.value = false
+
   if (success) {
     navigateTo('/backoffice/dashboard')
   } else {
-    alert('Falha no login')
+    error.value = 'Email ou password incorretos.'
   }
 }
 </script>
 
-
 <template>
-  <div class="flex flex-col md:flex-row h-auto md:h-screen w-full bg-[#0B1437]">
-    <!-- Left: Login Form -->
-    <div class="w-full md:w-1/2 text-white flex flex-col justify-between px-6 py-8 min-h-screen md:min-h-0">
-      <!-- Top -->
-      <p class="max-w-md mx-auto w-full text-sm text-gray-300 mb-6">< Back to homepage</p>
-      <div class="max-w-md mx-auto w-full">
-        <div class="flex-grow ">
-          <h2 class="text-3xl font-bold mb-2">Sign In</h2>
-        <p class="text-gray-400 mb-6">Enter your email and password to sign in!</p>
-        <button class="w-full flex items-center justify-center gap-2 bg-gray-800 text-sm py-2 rounded-xl mb-4 bg-opacity-40 hover:bg-opacity-85 transition duration-300">
-          <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-4 h-4" />
-          Sign in with Google
-        </button>
-        <div class="flex items-center my-4">
-          <hr class="flex-grow border-gray-600" />
-          <span class="text-xs text-gray-400 px-2">or</span>
-          <hr class="flex-grow border-gray-600" />
-        </div>
-        <form @submit.prevent="handleLogin" class="space-y-4">
-          <div>
-            <label class="text-sm block mb-1">Email</label>
-            <input v-model="email" type="email" placeholder="mail@example.com"
-              class="w-full p-2 bg-transparent border border-gray-600 rounded text-sm focus:outline-none focus:ring focus:ring-indigo-500" />
-          </div>
-          <div>
-            <label class="text-sm block mb-1">Password</label>
-            <input v-model="password" type="password" placeholder="Min. 8 characters"
-              class="w-full p-2 bg-transparent border border-gray-600 rounded text-sm focus:outline-none focus:ring focus:ring-indigo-500" />
-          </div>
-          <div class="flex items-center justify-between text-xs text-gray-400">
-            <label class="flex items-center gap-2">
-              <input type="checkbox" class="accent-indigo-500" />
-              Keep me logged in
-            </label>
-            <a href="#" class="hover:underline">Forgot password?</a>
-          </div>
-          <button type="submit" class="w-full py-2 bg-indigo-500 hover:bg-indigo-600 rounded-xl transition duration-300 text-white font-semibold">
-            Sign In
-          </button>
-        </form>
-        <p class="text-xs text-center text-gray-400 mt-4">
-          Not registered yet?
-          <a href="#" class="font-semibold text-white hover:underline">Create an Account</a>
-        </p>
-        </div>
-
-      </div>
-      <!-- Footer -->
-      <p class="text-xs text-center text-gray-500 mt-10">© 2025 Opsync. All Rights Reserved. Made with love by you.</p>
+  <div class="min-h-screen relative flex items-center justify-center bg-gray-50 overflow-hidden px-6 py-12">
+    <div class="absolute inset-0 pointer-events-none">
+      <div class="absolute -top-40 -right-40 w-96 h-96 bg-brand-100 rounded-full blur-3xl opacity-70" />
+      <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-brand-50 rounded-full blur-3xl opacity-70" />
     </div>
 
-    <!-- Right: Visual/Branding -->
-    <div class="w-full md:w-1/2 relative bg-gradient-to-br from-purple-600 to-indigo-700 text-white overflow-hidden min-h-[40vh] md:min-h-full rounded-t-[10rem] md:rounded-t-none md:rounded-bl-[10rem]">
-      <!-- Branding -->
-      <div class="flex flex-col justify-center items-center h-full relative z-10 text-center px-6 py-10">
-        <div class="text-6xl font-bold mb-4">🧠</div>
-        <h1 class="text-3xl font-semibold mb-2">OpsyncTech</h1>
-        <p class="text-sm mb-4 text-gray-200">Learn more about Opsync</p>
-        <a href="#" class="text-white underline text-lg">opsynctech.com</a>
+    <NuxtLink to="/" class="absolute top-6 left-6 font-black tracking-tight text-gray-900">
+      OPSYNK <span class="text-brand-500">Empilhadores</span>
+    </NuxtLink>
+
+    <div class="relative w-full max-w-md bg-white border border-gray-100 rounded-2xl shadow-xl p-8">
+      <div class="flex flex-col items-center text-center mb-6">
+        <div class="w-12 h-12 rounded-xl bg-gray-900 flex items-center justify-center mb-4">
+          <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a2 2 0 01-2 2H6a2 2 0 01-2-2V7a2 2 0 012-2h8a2 2 0 012 2v1" />
+          </svg>
+        </div>
+        <h1 class="text-xl font-bold text-gray-900">Iniciar Sessão</h1>
+        <p class="text-sm text-gray-500 mt-1">Aceda à área reservada para gerir produtos e encomendas.</p>
       </div>
-      <!-- Bottom links -->
-      <div class="absolute bottom-4 w-full text-center text-sm text-white space-x-4 hidden md:block">
-        <a href="#" class="hover:underline">Marketplace</a>
-        <a href="#" class="hover:underline">License</a>
-        <a href="#" class="hover:underline">Terms of Use</a>
-        <a href="#" class="hover:underline">Blog</a>
-      </div>
+
+      <form class="space-y-3" @submit.prevent="handleLogin">
+        <div class="relative">
+          <svg class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+          <input
+            v-model="email"
+            type="email"
+            required
+            placeholder="Email"
+            class="w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+          />
+        </div>
+
+        <div class="relative">
+          <svg class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 10-8 0v2" />
+          </svg>
+          <input
+            v-model="password"
+            :type="showPassword ? 'text' : 'password'"
+            required
+            placeholder="Password"
+            class="w-full pl-10 pr-10 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+          />
+          <button
+            type="button"
+            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            @click="showPassword = !showPassword"
+          >
+            <svg v-if="showPassword" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 3l18 18M10.58 10.58a2 2 0 002.83 2.83M9.88 5.09A9.77 9.77 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.9 10.9 0 01-2.29 3.88M6.53 6.53C4.6 7.72 3.14 9.63 2.458 12c.86 2.73 2.79 4.94 5.29 6.14" />
+            </svg>
+            <svg v-else class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="flex justify-end">
+          <NuxtLink to="/contactos" class="text-xs text-gray-500 hover:text-brand-500 transition">
+            Esqueceu-se da password?
+          </NuxtLink>
+        </div>
+
+        <p v-if="error" class="text-xs text-brand-600">{{ error }}</p>
+
+        <BaseButton type="submit" variant="brand" class="w-full text-center mt-2" :disabled="loading">
+          {{ loading ? 'A entrar...' : 'Entrar' }}
+        </BaseButton>
+      </form>
     </div>
   </div>
 </template>

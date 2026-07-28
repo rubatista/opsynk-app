@@ -29,5 +29,8 @@ export function parseProductFields(body: any) {
     fields.listingType = body.listingType
   }
 
+  if (typeof body?.metaTitle === 'string') fields.metaTitle = body.metaTitle.trim() || null
+  if (typeof body?.metaDescription === 'string') fields.metaDescription = body.metaDescription.trim() || null
+
   return fields
 }

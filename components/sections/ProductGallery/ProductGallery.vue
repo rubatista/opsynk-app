@@ -39,7 +39,7 @@ const prev = () => {
         v-for="(image, index) in images"
         :key="image.id"
         class="w-2.5 h-2.5 rounded-full"
-        :class="index === activeIndex ? 'bg-indigo-600' : 'bg-gray-300'"
+        :class="index === activeIndex ? 'bg-brand-500' : 'bg-gray-300'"
         @click="activeIndex = index"
       />
     </div>
