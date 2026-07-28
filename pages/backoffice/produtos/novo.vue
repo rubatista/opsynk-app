@@ -64,19 +64,19 @@ const submit = async () => {
     <form class="space-y-4" @submit.prevent="submit">
       <BaseInput v-model="name" label="Nome" required />
       <BaseInput v-model="description" label="Descrição" multiline />
-      <div class="grid grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <BaseInput v-model="brand" label="Marca" />
         <BaseInput v-model="model" label="Modelo" />
       </div>
-      <div class="grid grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <BaseInput v-model.number="capacityKg" label="Capacidade (kg)" type="number" />
         <BaseInput v-model.number="year" label="Ano" type="number" />
       </div>
-      <div class="grid grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <BaseSelect v-model="energyType" label="Energia" :options="energyOptions" />
         <BaseSelect v-model="listingType" label="Tipo" :options="listingOptions" />
       </div>
-      <div class="grid grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <BaseInput v-model.number="price" label="Preço (€)" type="number" step="0.01" required />
         <BaseInput v-model.number="stock" label="Stock" type="number" />
       </div>

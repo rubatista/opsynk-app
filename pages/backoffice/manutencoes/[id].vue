@@ -42,7 +42,7 @@ const submit = async () => {
     </p>
 
     <form class="space-y-4" @submit.prevent="submit">
-      <div class="grid grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <BaseInput v-model="performedAt" label="Feita em" type="date" required />
         <BaseInput v-model="nextDueDate" label="Próxima data" type="date" />
       </div>

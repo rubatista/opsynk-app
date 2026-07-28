@@ -82,7 +82,7 @@ const prev = () => {
 
       <div class="flex items-center gap-4">
         <button
-          class="hidden sm:flex shrink-0 w-10 h-10 rounded-full border border-gray-300 items-center justify-center hover:bg-gray-50 transition"
+          class="flex shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-gray-300 items-center justify-center hover:bg-gray-50 transition"
           @click="prev"
         >
           ‹
@@ -103,7 +103,7 @@ const prev = () => {
         </div>
 
         <button
-          class="hidden sm:flex shrink-0 w-10 h-10 rounded-full border border-gray-300 items-center justify-center hover:bg-gray-50 transition"
+          class="flex shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-gray-300 items-center justify-center hover:bg-gray-50 transition"
           @click="next"
         >
           ›

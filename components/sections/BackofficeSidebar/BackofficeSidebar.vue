@@ -31,10 +31,22 @@ const links = [
     icon: 'M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z',
   },
 ]
+
+const sidebarOpen = useState('backofficeSidebarOpen', () => false)
+const close = () => (sidebarOpen.value = false)
 </script>
 
 <template>
-  <aside class="w-56 shrink-0 bg-gray-950 text-white min-h-screen flex flex-col">
+  <div
+    v-if="sidebarOpen"
+    class="fixed inset-0 z-30 bg-black/50 md:hidden"
+    @click="close"
+  />
+
+  <aside
+    class="w-64 shrink-0 bg-gray-950 text-white min-h-screen flex flex-col fixed inset-y-0 left-0 z-40 transform transition-transform duration-200 md:static md:translate-x-0"
+    :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+  >
     <div class="px-6 py-5 font-black tracking-tight border-b border-white/10">
       OPSYNK <span class="text-brand-500">Empilhadores</span>
     </div>
@@ -45,6 +57,7 @@ const links = [
         :to="link.to"
         class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-300 hover:bg-white/5 hover:text-white transition"
         active-class="!bg-brand-500 !text-white font-semibold"
+        @click="close"
       >
         <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" :d="link.icon" />

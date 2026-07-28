@@ -7,6 +7,8 @@ const auth = useAuthStore()
 const isDark = useDark()
 const toggleDark = useToggle(isDark)
 
+const sidebarOpen = useState('backofficeSidebarOpen', () => false)
+
 const displayName = computed(() => auth.user?.name || auth.user?.email || 'Utilizador')
 const initials = computed(() =>
   displayName.value
@@ -28,8 +30,19 @@ const handleLogout = () => {
 </script>
 
 <template>
-  <header class="h-16 shrink-0 flex items-center justify-between px-6 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950">
-    <h1 class="font-bold text-lg text-gray-900 dark:text-white">{{ route.meta.title || 'Backoffice' }}</h1>
+  <header class="h-16 shrink-0 flex items-center justify-between px-4 sm:px-6 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950">
+    <div class="flex items-center gap-3">
+      <button
+        class="md:hidden w-9 h-9 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition"
+        aria-label="Abrir menu"
+        @click="sidebarOpen = !sidebarOpen"
+      >
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+      <h1 class="font-bold text-lg text-gray-900 dark:text-white">{{ route.meta.title || 'Backoffice' }}</h1>
+    </div>
 
     <div class="flex items-center gap-2">
       <button

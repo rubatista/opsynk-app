@@ -8,7 +8,7 @@ import BackofficeTopbar from '~/components/sections/BackofficeTopbar/BackofficeT
     <BackofficeSidebar />
     <div class="flex-1 flex flex-col min-h-screen">
       <BackofficeTopbar />
-      <main class="flex-1 px-8 py-8">
+      <main class="flex-1 px-4 sm:px-8 py-6 sm:py-8">
         <slot />
       </main>
     </div>
