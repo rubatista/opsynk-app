@@ -6,9 +6,9 @@ import BackofficeTopbar from '~/components/sections/BackofficeTopbar/BackofficeT
 <template>
   <div class="min-h-screen flex bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100">
     <BackofficeSidebar />
-    <div class="flex-1 flex flex-col min-h-screen">
+    <div class="flex-1 flex flex-col min-h-screen min-w-0">
       <BackofficeTopbar />
-      <main class="flex-1 px-4 sm:px-8 py-6 sm:py-8">
+      <main class="flex-1 min-w-0 px-4 sm:px-8 py-6 sm:py-8">
         <slot />
       </main>
     </div>
