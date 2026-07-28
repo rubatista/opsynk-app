@@ -30,6 +30,9 @@ export default defineEventHandler(async (event) => {
   if (body?.productId !== undefined) {
     updates.productId = body.productId ? Number(body.productId) : null
   }
+  if (body?.clientId !== undefined) {
+    updates.clientId = body.clientId ? Number(body.clientId) : null
+  }
 
   const db = useDatabase()
   const [updated] = db

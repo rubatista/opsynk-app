@@ -17,11 +17,12 @@ export default defineEventHandler(async (event) => {
   const ownerContact = typeof body?.ownerContact === 'string' ? body.ownerContact.trim() || null : null
   const notes = typeof body?.notes === 'string' ? body.notes.trim() || null : null
   const productId = body?.productId ? Number(body.productId) : null
+  const clientId = body?.clientId ? Number(body.clientId) : null
 
   const db = useDatabase()
   const [created] = db
     .insert(equipment)
-    .values({ brand, model, serialNumber, ownerName, ownerContact, notes, productId })
+    .values({ brand, model, serialNumber, ownerName, ownerContact, notes, productId, clientId })
     .returning()
     .all()
 

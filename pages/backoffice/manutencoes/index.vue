@@ -44,7 +44,12 @@ const removeMaintenance = async (id: number) => {
               </NuxtLink>
               <span v-else class="text-gray-400">—</span>
             </td>
-            <td class="px-4 py-3">{{ m.equipment?.ownerName || '—' }}</td>
+            <td class="px-4 py-3">
+              <NuxtLink v-if="m.equipment?.client" :to="`/backoffice/clientes/${m.equipment.client.id}`" class="text-brand-500 hover:underline">
+                {{ m.equipment.client.name }}
+              </NuxtLink>
+              <span v-else>{{ m.equipment?.ownerName || '—' }}</span>
+            </td>
             <td class="px-4 py-3">{{ m.performedAt }}</td>
             <td class="px-4 py-3">
               <span v-if="m.nextDueDate" :class="isOverdue(m.nextDueDate) ? 'text-red-600 dark:text-red-400 font-semibold' : ''">

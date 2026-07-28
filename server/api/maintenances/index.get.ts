@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm'
 import { useDatabase } from '../../database/client'
-import { maintenances, equipment } from '../../database/schema'
+import { maintenances, equipment, clients } from '../../database/schema'
 
 export default defineEventHandler((event) => {
   requireUser(event)
@@ -17,11 +17,23 @@ export default defineEventHandler((event) => {
   const equipmentRows = db.select().from(equipment).all()
   const equipmentMap = new Map(equipmentRows.map((item: any) => [item.id, item]))
 
+  const clientRows = db.select().from(clients).all()
+  const clientMap = new Map(clientRows.map((client: any) => [client.id, client]))
+
   const withEquipment = rows.map((row: any) => {
     const item = equipmentMap.get(row.equipmentId)
+    const client = item?.clientId ? clientMap.get(item.clientId) : null
     return {
       ...row,
-      equipment: item ? { id: item.id, brand: item.brand, model: item.model, ownerName: item.ownerName } : null,
+      equipment: item
+        ? {
+            id: item.id,
+            brand: item.brand,
+            model: item.model,
+            ownerName: item.ownerName,
+            client: client ? { id: client.id, name: client.name } : null,
+          }
+        : null,
     }
   })
 

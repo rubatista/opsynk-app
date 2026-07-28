@@ -50,6 +50,13 @@
       "when": 1785276151663,
       "tag": "0006_fixed_black_queen",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1785279533444,
+      "tag": "0007_smooth_medusa",
+      "breakpoints": true
     }
   ]
 }

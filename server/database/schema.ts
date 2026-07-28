@@ -45,6 +45,16 @@ export const siteSettings = sqliteTable('site_settings', {
   updatedAt: text('updated_at').notNull().default(sql`(current_timestamp)`),
 })
 
+export const clients = sqliteTable('clients', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  name: text('name').notNull(),
+  phone: text('phone'),
+  email: text('email'),
+  address: text('address'),
+  notes: text('notes'),
+  createdAt: text('created_at').notNull().default(sql`(current_timestamp)`),
+})
+
 export const equipment = sqliteTable('equipment', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   brand: text('brand').notNull(),
@@ -52,6 +62,7 @@ export const equipment = sqliteTable('equipment', {
   serialNumber: text('serial_number'),
   ownerName: text('owner_name'),
   ownerContact: text('owner_contact'),
+  clientId: integer('client_id').references(() => clients.id, { onDelete: 'set null' }),
   productId: integer('product_id').references(() => products.id, { onDelete: 'set null' }),
   notes: text('notes'),
   createdAt: text('created_at').notNull().default(sql`(current_timestamp)`),

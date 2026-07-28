@@ -36,7 +36,12 @@ const removeEquipment = async (id: number) => {
           <tr v-for="item in items" :key="item.id" class="border-t border-gray-100 dark:border-gray-800 text-gray-900 dark:text-gray-100">
             <td class="px-4 py-3">{{ item.brand }} {{ item.model }}</td>
             <td class="px-4 py-3">{{ item.serialNumber || '—' }}</td>
-            <td class="px-4 py-3">{{ item.ownerName || '—' }}</td>
+            <td class="px-4 py-3">
+              <NuxtLink v-if="item.client" :to="`/backoffice/clientes/${item.client.id}`" class="text-brand-500 hover:underline">
+                {{ item.client.name }}
+              </NuxtLink>
+              <span v-else>{{ item.ownerName || '—' }}</span>
+            </td>
             <td class="px-4 py-3">
               <NuxtLink v-if="item.product" :to="`/backoffice/produtos/${item.product.id}`" class="text-brand-500 hover:underline">
                 {{ item.product.name }}
