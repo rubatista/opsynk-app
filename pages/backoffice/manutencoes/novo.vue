@@ -7,10 +7,13 @@ definePageMeta({ layout: 'backoffice', title: 'Nova Manutenção' })
 
 const route = useRoute()
 
-const products = await useAuthFetch<any[]>('/api/products')
-const productOptions = products.map((p: any) => ({ value: String(p.id), label: p.name }))
+const items = await useAuthFetch<any[]>('/api/equipment')
+const equipmentOptions = items.map((item: any) => ({
+  value: String(item.id),
+  label: item.ownerName ? `${item.brand} ${item.model} — ${item.ownerName}` : `${item.brand} ${item.model}`,
+}))
 
-const productId = ref(String(route.query.productId || productOptions[0]?.value || ''))
+const equipmentId = ref(String(route.query.equipmentId || equipmentOptions[0]?.value || ''))
 const performedAt = ref(new Date().toISOString().slice(0, 10))
 const description = ref('')
 const nextDueDate = ref('')
@@ -22,7 +25,7 @@ const submit = async () => {
     await useAuthFetch('/api/maintenances', {
       method: 'POST',
       body: {
-        productId: Number(productId.value),
+        equipmentId: Number(equipmentId.value),
         performedAt: performedAt.value,
         description: description.value,
         nextDueDate: nextDueDate.value || null,
@@ -39,8 +42,14 @@ const submit = async () => {
   <div class="max-w-md">
     <h1 class="text-2xl font-bold mb-6 dark:text-white">Nova Manutenção</h1>
 
-    <form class="space-y-4" @submit.prevent="submit">
-      <BaseSelect v-model="productId" label="Empilhador" :options="productOptions" required />
+    <p v-if="!equipmentOptions.length" class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+      Ainda não há equipamentos registados.
+      <NuxtLink to="/backoffice/equipamentos/novo" class="text-brand-500 hover:underline">Criar um equipamento</NuxtLink>
+      primeiro.
+    </p>
+
+    <form v-else class="space-y-4" @submit.prevent="submit">
+      <BaseSelect v-model="equipmentId" label="Equipamento" :options="equipmentOptions" required />
       <div class="grid grid-cols-2 gap-4">
         <BaseInput v-model="performedAt" label="Feita em" type="date" required />
         <BaseInput v-model="nextDueDate" label="Próxima data" type="date" />

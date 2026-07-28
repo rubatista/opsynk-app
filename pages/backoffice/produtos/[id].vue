@@ -32,13 +32,6 @@ const uploadError = ref('')
 const reordering = ref(false)
 const dragIndex = ref<number | null>(null)
 
-const maintenances = ref(await useAuthFetch<any[]>(`/api/maintenances?productId=${id}`))
-const maintenanceHistory = computed(() =>
-  [...maintenances.value].sort((a, b) => b.performedAt.localeCompare(a.performedAt))
-)
-const today = new Date().toISOString().slice(0, 10)
-const isMaintenanceOverdue = (date: string | null) => !!date && date < today
-
 const handleUpload = async (event: Event) => {
   const files = (event.target as HTMLInputElement).files
   if (!files?.length) return
@@ -216,42 +209,6 @@ const submit = async () => {
       <input ref="fileInput" type="file" accept="image/*" multiple class="text-sm dark:text-gray-300" @change="handleUpload" />
       <p v-if="uploading" class="text-sm text-gray-500 dark:text-gray-400 mt-2">A enviar...</p>
       <p v-if="uploadError" class="text-sm text-red-600 dark:text-red-400 mt-2">{{ uploadError }}</p>
-    </div>
-
-    <div class="mt-10">
-      <div class="flex items-center justify-between mb-3">
-        <h2 class="text-lg font-bold dark:text-white">Manutenções</h2>
-        <NuxtLink :to="`/backoffice/manutencoes/novo?productId=${id}`" class="text-sm text-brand-500 hover:underline">
-          + Nova Manutenção
-        </NuxtLink>
-      </div>
-
-      <p v-if="!maintenanceHistory.length" class="text-sm text-gray-500 dark:text-gray-400">
-        Ainda não há manutenções registadas.
-      </p>
-
-      <ul v-else class="space-y-3">
-        <li
-          v-for="m in maintenanceHistory"
-          :key="m.id"
-          class="border border-gray-200 dark:border-gray-800 rounded-lg p-3 text-sm"
-        >
-          <div class="flex items-center justify-between">
-            <span class="font-semibold dark:text-white">{{ m.performedAt }}</span>
-            <NuxtLink :to="`/backoffice/manutencoes/${m.id}`" class="text-xs text-brand-500 hover:underline">
-              Editar
-            </NuxtLink>
-          </div>
-          <p class="text-gray-600 dark:text-gray-300 mt-1">{{ m.description }}</p>
-          <p
-            v-if="m.nextDueDate"
-            class="text-xs mt-2"
-            :class="isMaintenanceOverdue(m.nextDueDate) ? 'text-red-600 dark:text-red-400 font-semibold' : 'text-gray-400'"
-          >
-            Próxima manutenção: {{ m.nextDueDate }}
-          </p>
-        </li>
-      </ul>
     </div>
   </div>
 </template>

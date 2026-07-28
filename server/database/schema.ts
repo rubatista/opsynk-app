@@ -45,11 +45,23 @@ export const siteSettings = sqliteTable('site_settings', {
   updatedAt: text('updated_at').notNull().default(sql`(current_timestamp)`),
 })
 
+export const equipment = sqliteTable('equipment', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  brand: text('brand').notNull(),
+  model: text('model').notNull(),
+  serialNumber: text('serial_number'),
+  ownerName: text('owner_name'),
+  ownerContact: text('owner_contact'),
+  productId: integer('product_id').references(() => products.id, { onDelete: 'set null' }),
+  notes: text('notes'),
+  createdAt: text('created_at').notNull().default(sql`(current_timestamp)`),
+})
+
 export const maintenances = sqliteTable('maintenances', {
   id: integer('id').primaryKey({ autoIncrement: true }),
-  productId: integer('product_id')
+  equipmentId: integer('equipment_id')
     .notNull()
-    .references(() => products.id, { onDelete: 'cascade' }),
+    .references(() => equipment.id, { onDelete: 'cascade' }),
   performedAt: text('performed_at').notNull(),
   description: text('description').notNull(),
   nextDueDate: text('next_due_date'),

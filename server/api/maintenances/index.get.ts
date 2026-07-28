@@ -1,28 +1,31 @@
 import { eq } from 'drizzle-orm'
 import { useDatabase } from '../../database/client'
-import { maintenances, products } from '../../database/schema'
+import { maintenances, equipment } from '../../database/schema'
 
 export default defineEventHandler((event) => {
   requireUser(event)
 
   const query = getQuery(event)
-  const productId = query.productId ? Number(query.productId) : null
+  const equipmentId = query.equipmentId ? Number(query.equipmentId) : null
 
   const db = useDatabase()
 
-  const rows = productId
-    ? db.select().from(maintenances).where(eq(maintenances.productId, productId)).all()
+  const rows = equipmentId
+    ? db.select().from(maintenances).where(eq(maintenances.equipmentId, equipmentId)).all()
     : db.select().from(maintenances).all()
 
-  const productRows = db.select().from(products).all()
-  const productMap = new Map(productRows.map((product: any) => [product.id, product]))
+  const equipmentRows = db.select().from(equipment).all()
+  const equipmentMap = new Map(equipmentRows.map((item: any) => [item.id, item]))
 
-  const withProduct = rows.map((row: any) => ({
-    ...row,
-    product: productMap.has(row.productId) ? { id: row.productId, name: productMap.get(row.productId).name } : null,
-  }))
+  const withEquipment = rows.map((row: any) => {
+    const item = equipmentMap.get(row.equipmentId)
+    return {
+      ...row,
+      equipment: item ? { id: item.id, brand: item.brand, model: item.model, ownerName: item.ownerName } : null,
+    }
+  })
 
-  return withProduct.sort((a: any, b: any) => {
+  return withEquipment.sort((a: any, b: any) => {
     if (!a.nextDueDate && !b.nextDueDate) return 0
     if (!a.nextDueDate) return 1
     if (!b.nextDueDate) return -1

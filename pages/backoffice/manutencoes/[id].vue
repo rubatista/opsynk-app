@@ -8,7 +8,7 @@ const route = useRoute()
 const id = route.params.id as string
 
 const maintenance = await useAuthFetch<any>(`/api/maintenances/${id}`)
-const product = await useAuthFetch<any>(`/api/products/${maintenance.productId}`)
+const equipment = await useAuthFetch<any>(`/api/equipment/${maintenance.equipmentId}`)
 
 const performedAt = ref(maintenance.performedAt)
 const description = ref(maintenance.description)
@@ -36,7 +36,10 @@ const submit = async () => {
 <template>
   <div class="max-w-md">
     <h1 class="text-2xl font-bold mb-1 dark:text-white">Editar Manutenção</h1>
-    <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">{{ product.name }}</p>
+    <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">
+      {{ equipment.brand }} {{ equipment.model }}
+      <span v-if="equipment.ownerName"> — {{ equipment.ownerName }}</span>
+    </p>
 
     <form class="space-y-4" @submit.prevent="submit">
       <div class="grid grid-cols-2 gap-4">

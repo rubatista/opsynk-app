@@ -36,6 +36,20 @@
       "when": 1785258834326,
       "tag": "0004_organic_warstar",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1785276124334,
+      "tag": "0005_unique_shape",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1785276151663,
+      "tag": "0006_fixed_black_queen",
+      "breakpoints": true
     }
   ]
 }

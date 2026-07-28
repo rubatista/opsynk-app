@@ -27,7 +27,8 @@ const removeMaintenance = async (id: number) => {
     <table v-else class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden text-sm">
       <thead class="bg-gray-50 dark:bg-gray-800 text-left text-gray-500 dark:text-gray-400">
         <tr>
-          <th class="px-4 py-3">Empilhador</th>
+          <th class="px-4 py-3">Equipamento</th>
+          <th class="px-4 py-3">Cliente</th>
           <th class="px-4 py-3">Feita em</th>
           <th class="px-4 py-3">Próxima data</th>
           <th class="px-4 py-3">Descrição</th>
@@ -37,11 +38,12 @@ const removeMaintenance = async (id: number) => {
       <tbody>
         <tr v-for="m in maintenances" :key="m.id" class="border-t border-gray-100 dark:border-gray-800 text-gray-900 dark:text-gray-100">
           <td class="px-4 py-3">
-            <NuxtLink v-if="m.product" :to="`/backoffice/produtos/${m.product.id}`" class="text-brand-500 hover:underline">
-              {{ m.product.name }}
+            <NuxtLink v-if="m.equipment" :to="`/backoffice/equipamentos/${m.equipment.id}`" class="text-brand-500 hover:underline">
+              {{ m.equipment.brand }} {{ m.equipment.model }}
             </NuxtLink>
             <span v-else class="text-gray-400">—</span>
           </td>
+          <td class="px-4 py-3">{{ m.equipment?.ownerName || '—' }}</td>
           <td class="px-4 py-3">{{ m.performedAt }}</td>
           <td class="px-4 py-3">
             <span v-if="m.nextDueDate" :class="isOverdue(m.nextDueDate) ? 'text-red-600 dark:text-red-400 font-semibold' : ''">
