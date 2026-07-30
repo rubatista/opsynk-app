@@ -98,6 +98,10 @@ const listingOptions = [
   { value: 'aluguer', label: 'Aluguer' },
 ]
 
+const rentals = ref(product.listingType === 'aluguer' ? await useAuthFetch<any[]>(`/api/rentals?productId=${id}`) : [])
+const activeRental = computed(() => rentals.value.find((rental) => rental.status === 'ativo'))
+const rentalHistory = computed(() => [...rentals.value].sort((a, b) => b.startDate.localeCompare(a.startDate)))
+
 const submit = async () => {
   error.value = ''
   try {
@@ -209,6 +213,40 @@ const submit = async () => {
       <input ref="fileInput" type="file" accept="image/*" multiple class="text-sm dark:text-gray-300" @change="handleUpload" />
       <p v-if="uploading" class="text-sm text-gray-500 dark:text-gray-400 mt-2">A enviar...</p>
       <p v-if="uploadError" class="text-sm text-red-600 dark:text-red-400 mt-2">{{ uploadError }}</p>
+    </div>
+
+    <div v-if="listingType === 'aluguer'" class="mt-10">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-lg font-bold dark:text-white">Alugueres</h2>
+        <NuxtLink :to="`/backoffice/alugueres/novo?productId=${id}`" class="text-sm text-brand-500 hover:underline">
+          + Novo Aluguer
+        </NuxtLink>
+      </div>
+
+      <p class="text-sm mb-4">
+        <span v-if="activeRental" class="text-brand-500 font-semibold">
+          Alugado{{ activeRental.client ? ` a ${activeRental.client.name}` : activeRental.renterName ? ` a ${activeRental.renterName}` : '' }}{{ activeRental.endDate ? ` até ${activeRental.endDate}` : '' }}
+        </span>
+        <span v-else class="text-gray-500 dark:text-gray-400">Disponível</span>
+      </p>
+
+      <p v-if="!rentalHistory.length" class="text-sm text-gray-500 dark:text-gray-400">
+        Ainda não há alugueres registados.
+      </p>
+
+      <ul v-else class="space-y-2">
+        <li
+          v-for="rental in rentalHistory"
+          :key="rental.id"
+          class="flex items-center justify-between border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-sm"
+        >
+          <span class="dark:text-white">
+            {{ rental.startDate }} — {{ rental.endDate || 'sem data' }}
+            <span class="text-gray-400">({{ rental.status === 'ativo' ? 'Ativo' : 'Terminado' }})</span>
+          </span>
+          <NuxtLink :to="`/backoffice/alugueres/${rental.id}`" class="text-brand-500 hover:underline">Editar</NuxtLink>
+        </li>
+      </ul>
     </div>
   </div>
 </template>

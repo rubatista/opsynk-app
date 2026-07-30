@@ -5,6 +5,8 @@ import BaseBadge from '~/components/atoms/BaseBadge/BaseBadge.vue'
 definePageMeta({ layout: 'backoffice', title: 'Produtos' })
 
 const { data: products, refresh } = await useFetch('/api/products')
+const rentals = ref(await useAuthFetch<any[]>('/api/rentals'))
+const isRented = (productId: number) => rentals.value.some((rental) => rental.productId === productId && rental.status === 'ativo')
 
 const removeProduct = async (id: number) => {
   if (!confirm('Apagar este produto?')) return
@@ -44,6 +46,13 @@ const removeProduct = async (id: number) => {
               <BaseBadge :variant="product.listingType">
                 {{ product.listingType === 'aluguer' ? 'Aluguer' : 'Venda' }}
               </BaseBadge>
+              <span
+                v-if="product.listingType === 'aluguer'"
+                class="ml-2 text-xs"
+                :class="isRented(product.id) ? 'text-red-500' : 'text-gray-400'"
+              >
+                {{ isRented(product.id) ? 'Alugado' : 'Disponível' }}
+              </span>
             </td>
             <td class="px-4 py-3">{{ product.price.toFixed(2) }} €</td>
             <td class="px-4 py-3">{{ product.stock }}</td>

@@ -78,3 +78,18 @@ export const maintenances = sqliteTable('maintenances', {
   nextDueDate: text('next_due_date'),
   createdAt: text('created_at').notNull().default(sql`(current_timestamp)`),
 })
+
+export const rentals = sqliteTable('rentals', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  productId: integer('product_id')
+    .notNull()
+    .references(() => products.id, { onDelete: 'cascade' }),
+  clientId: integer('client_id').references(() => clients.id, { onDelete: 'set null' }),
+  renterName: text('renter_name'),
+  renterContact: text('renter_contact'),
+  startDate: text('start_date').notNull(),
+  endDate: text('end_date'),
+  status: text('status').notNull().default('ativo'),
+  notes: text('notes'),
+  createdAt: text('created_at').notNull().default(sql`(current_timestamp)`),
+})

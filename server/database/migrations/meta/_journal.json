@@ -57,6 +57,13 @@
       "when": 1785279533444,
       "tag": "0007_smooth_medusa",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1785367435571,
+      "tag": "0008_quiet_makkari",
+      "breakpoints": true
     }
   ]
 }
