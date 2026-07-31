@@ -93,3 +93,18 @@ export const rentals = sqliteTable('rentals', {
   notes: text('notes'),
   createdAt: text('created_at').notNull().default(sql`(current_timestamp)`),
 })
+
+export const leads = sqliteTable('leads', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  name: text('name').notNull(),
+  email: text('email'),
+  phone: text('phone'),
+  message: text('message').notNull(),
+  status: text('status').notNull().default('novo'),
+  createdAt: text('created_at').notNull().default(sql`(current_timestamp)`),
+})
+
+export const pageViews = sqliteTable('page_views', {
+  date: text('date').primaryKey(),
+  count: integer('count').notNull().default(0),
+})

@@ -92,6 +92,8 @@
 
 
 proximos passos:
-Formulário de contacto funcional — a página /contactos hoje só mostra o telefone/email; um formulário que grava pedidos no backoffice (tipo "leads") evitava perder contactos de clientes interessados.
 Notificações reais — o sino no topo do backoffice já lá está mas é só decorativo; dava para ligá-lo a eventos reais (manutenção a vencer, stock baixo, novo pedido de contacto).
 Fotos nas manutenções — tal como os produtos têm imagens, podia anexar fotos do trabalho feito a cada manutenção (útil para mostrar ao cliente ou para o próprio histórico).
+
+feito:
+Formulário de contacto funcional — pedidos ficam guardados como "leads" em /backoffice/leads, com estado Novo/Contactado.

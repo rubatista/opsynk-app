@@ -1,23 +1,26 @@
 <script setup lang="ts">
 import BaseCard from '~/components/atoms/BaseCard/BaseCard.vue'
+import VisitsChart from '~/components/sections/VisitsChart/VisitsChart.vue'
 
 definePageMeta({ layout: 'backoffice', title: 'Dashboard' })
 
-const [products, users, maintenances, rentals] = await Promise.all([
+const [products, users, maintenances, rentals, leads] = await Promise.all([
   useAuthFetch<any[]>('/api/products'),
   useAuthFetch<any[]>('/api/users'),
   useAuthFetch<any[]>('/api/maintenances'),
   useAuthFetch<any[]>('/api/rentals'),
+  useAuthFetch<any[]>('/api/leads'),
 ])
 
 const in30Days = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)
 const upcomingMaintenances = maintenances.filter((m) => m.nextDueDate && m.nextDueDate <= in30Days).length
 const endingRentals = rentals.filter((r) => r.status === 'ativo' && r.endDate && r.endDate <= in30Days).length
+const newLeads = leads.filter((l) => l.status === 'novo').length
 </script>
 
 <template>
   <div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-3xl">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 max-w-4xl">
       <BaseCard>
         <p class="text-sm text-gray-500 dark:text-gray-400">Produtos</p>
         <p class="text-3xl font-bold text-brand-500">{{ products.length }}</p>
@@ -38,6 +41,16 @@ const endingRentals = rentals.filter((r) => r.status === 'ativo' && r.endDate &&
           <p class="text-3xl font-bold text-brand-500">{{ endingRentals }}</p>
         </BaseCard>
       </NuxtLink>
+      <NuxtLink to="/backoffice/leads" class="block">
+        <BaseCard class="h-full hover:shadow-md transition">
+          <p class="text-sm text-gray-500 dark:text-gray-400">Novos pedidos de contacto</p>
+          <p class="text-3xl font-bold text-brand-500">{{ newLeads }}</p>
+        </BaseCard>
+      </NuxtLink>
+    </div>
+
+    <div class="max-w-4xl mt-6">
+      <VisitsChart />
     </div>
   </div>
 </template>
