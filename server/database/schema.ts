@@ -108,3 +108,25 @@ export const pageViews = sqliteTable('page_views', {
   date: text('date').primaryKey(),
   count: integer('count').notNull().default(0),
 })
+
+export const clientNotes = sqliteTable('client_notes', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  clientId: integer('client_id')
+    .notNull()
+    .references(() => clients.id, { onDelete: 'cascade' }),
+  content: text('content').notNull(),
+  createdAt: text('created_at').notNull().default(sql`(current_timestamp)`),
+})
+
+export const clientTransactions = sqliteTable('client_transactions', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  clientId: integer('client_id')
+    .notNull()
+    .references(() => clients.id, { onDelete: 'cascade' }),
+  type: text('type').notNull(),
+  amount: real('amount').notNull(),
+  description: text('description').notNull(),
+  date: text('date').notNull(),
+  status: text('status').notNull().default('pendente'),
+  createdAt: text('created_at').notNull().default(sql`(current_timestamp)`),
+})
