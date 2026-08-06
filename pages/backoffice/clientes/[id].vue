@@ -63,7 +63,7 @@ const removeNote = async (noteId: number) => {
   notes.value = notes.value.filter((note) => note.id !== noteId)
 }
 
-// Financeiro
+// Finanças
 const transactions = ref(await useAuthFetch<any[]>(`/api/client-transactions?clientId=${id}`))
 
 const pendingReceber = computed(() =>
@@ -167,16 +167,16 @@ const removeTransaction = async (txId: number) => {
     </div>
 
     <div class="mt-10">
-      <h2 class="text-lg font-bold mb-3 dark:text-white">Financeiro</h2>
+      <h2 class="text-lg font-bold mb-3 dark:text-white">Finanças</h2>
 
       <div class="grid grid-cols-2 gap-4 mb-4">
         <BaseCard>
           <p class="text-xs text-gray-500 dark:text-gray-400">A receber (pendente)</p>
-          <p class="text-xl font-bold text-brand-500">{{ pendingReceber.toFixed(2) }} €</p>
+          <p class="text-xl font-bold text-brand-500">{{ formatCurrency(pendingReceber) }}</p>
         </BaseCard>
         <BaseCard>
           <p class="text-xs text-gray-500 dark:text-gray-400">A pagar (pendente)</p>
-          <p class="text-xl font-bold text-brand-500">{{ pendingPagar.toFixed(2) }} €</p>
+          <p class="text-xl font-bold text-brand-500">{{ formatCurrency(pendingPagar) }}</p>
         </BaseCard>
       </div>
 
@@ -205,7 +205,7 @@ const removeTransaction = async (txId: number) => {
         >
           <div class="flex items-center justify-between">
             <span class="font-semibold dark:text-white">
-              {{ tx.type === 'a_receber' ? 'A receber' : 'A pagar' }} — {{ tx.amount.toFixed(2) }} €
+              {{ tx.type === 'a_receber' ? 'A receber' : 'A pagar' }} — {{ formatCurrency(tx.amount) }}
             </span>
             <span
               class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold"

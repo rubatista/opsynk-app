@@ -14,7 +14,7 @@ const model = defineModel<string>()
     <select
       v-model="model"
       :required="required"
-      class="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-lg text-sm bg-white dark:bg-gray-900 dark:text-gray-100"
+      class="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-xl text-sm bg-white dark:bg-gray-900 dark:text-gray-100"
     >
       <option v-for="opt in options" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
     </select>

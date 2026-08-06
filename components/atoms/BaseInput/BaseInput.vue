@@ -24,7 +24,7 @@ const [model, modifiers] = defineModel<string | number | null>({
       v-model="model"
       :placeholder="placeholder"
       :required="required"
-      class="w-full p-2 border border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:placeholder-gray-500 rounded-lg text-sm"
+      class="w-full p-2 border border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:placeholder-gray-500 rounded-xl text-sm"
     />
     <input
       v-else
@@ -33,7 +33,7 @@ const [model, modifiers] = defineModel<string | number | null>({
       :placeholder="placeholder"
       :required="required"
       :step="step"
-      class="w-full p-2 border border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:placeholder-gray-500 rounded-lg text-sm"
+      class="w-full p-2 border border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:placeholder-gray-500 rounded-xl text-sm"
     />
   </div>
 </template>

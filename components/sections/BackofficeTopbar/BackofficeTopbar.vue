@@ -30,7 +30,7 @@ const handleLogout = () => {
 </script>
 
 <template>
-  <header class="h-16 shrink-0 flex items-center justify-between px-4 sm:px-6 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950">
+  <header class="h-16 shrink-0 flex items-center justify-between px-4 sm:px-6 bg-white dark:bg-gray-900 md:rounded-3xl md:shadow-sm border-b border-gray-200 dark:border-gray-800 md:border-b-0">
     <div class="flex items-center gap-3">
       <button
         class="md:hidden w-9 h-9 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition"
@@ -45,6 +45,16 @@ const handleLogout = () => {
     </div>
 
     <div class="flex items-center gap-2">
+      <NuxtLink
+        to="/backoffice/leads"
+        class="w-9 h-9 rounded-full flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+        aria-label="Pedidos de Contacto"
+      >
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+        </svg>
+      </NuxtLink>
+
       <button
         class="w-9 h-9 rounded-full flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
         aria-label="Notificações"

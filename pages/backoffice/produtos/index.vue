@@ -54,7 +54,7 @@ const removeProduct = async (id: number) => {
                 {{ isRented(product.id) ? 'Alugado' : 'Disponível' }}
               </span>
             </td>
-            <td class="px-4 py-3">{{ product.price.toFixed(2) }} €</td>
+            <td class="px-4 py-3">{{ formatCurrency(product.price) }}</td>
             <td class="px-4 py-3">{{ product.stock }}</td>
             <td class="px-4 py-3 text-right space-x-3">
               <NuxtLink :to="`/backoffice/produtos/${product.id}`" class="text-brand-500 hover:underline">

@@ -60,7 +60,7 @@ if (product.value) {
           </ul>
 
           <div class="mt-6 flex items-center justify-between border-t border-gray-100 pt-6">
-            <span class="text-3xl font-black text-brand-500">{{ product.price.toFixed(2) }} €</span>
+            <span class="text-3xl font-black text-brand-500">{{ formatCurrency(product.price) }}</span>
             <span class="text-sm text-gray-400">Stock: {{ product.stock }}</span>
           </div>
 

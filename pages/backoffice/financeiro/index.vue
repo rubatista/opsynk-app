@@ -1,5 +1,5 @@
 <script setup lang="ts">
-definePageMeta({ layout: 'backoffice', title: 'Financeiro' })
+definePageMeta({ layout: 'backoffice', title: 'Finanças' })
 
 const transactions = ref(await useAuthFetch<any[]>('/api/client-transactions'))
 
@@ -18,7 +18,7 @@ const removeTransaction = async (id: number) => {
 
 <template>
   <div>
-    <h1 class="text-2xl font-bold mb-6 dark:text-white">Financeiro</h1>
+    <h1 class="text-2xl font-bold mb-6 dark:text-white">Finanças</h1>
 
     <p v-if="!transactions?.length" class="text-gray-500 dark:text-gray-400">Ainda não há movimentos financeiros.</p>
 
@@ -51,7 +51,7 @@ const removeTransaction = async (id: number) => {
                 {{ tx.type === 'a_receber' ? 'A receber' : 'A pagar' }}
               </span>
             </td>
-            <td class="px-4 py-3">{{ tx.amount.toFixed(2) }} €</td>
+            <td class="px-4 py-3">{{ formatCurrency(tx.amount) }}</td>
             <td class="px-4 py-3 max-w-xs truncate">{{ tx.description }}</td>
             <td class="px-4 py-3">{{ tx.date }}</td>
             <td class="px-4 py-3">

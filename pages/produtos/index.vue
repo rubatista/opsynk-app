@@ -92,7 +92,7 @@ const energyLabels: Record<string, string> = {
               </ul>
 
               <div class="mt-3 flex items-center justify-between">
-                <span class="font-bold text-brand-500">{{ product.price.toFixed(2) }} €</span>
+                <span class="font-bold text-brand-500">{{ formatCurrency(product.price) }}</span>
                 <span class="text-xs text-gray-400">Stock: {{ product.stock }}</span>
               </div>
             </BaseCard>
