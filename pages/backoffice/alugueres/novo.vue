@@ -52,7 +52,7 @@ const submit = async () => {
   <div class="max-w-md">
     <h1 class="text-2xl font-bold mb-6 dark:text-white">Novo Aluguer</h1>
 
-    <p v-if="!productOptions.length" class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+    <p v-if="!productOptions.length" class="text-sm text-gray-500 dark:text-zinc-400 mb-4">
       Não há produtos definidos como "Aluguer". Marca um produto como Aluguer na sua ficha primeiro.
     </p>
 

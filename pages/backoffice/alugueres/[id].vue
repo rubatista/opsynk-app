@@ -31,6 +31,8 @@ const status = ref(rental.status)
 const notes = ref(rental.notes || '')
 const error = ref('')
 
+const { refreshNotifications } = useNotifications()
+
 const submit = async () => {
   error.value = ''
   try {
@@ -46,6 +48,7 @@ const submit = async () => {
         notes: notes.value || null,
       },
     })
+    refreshNotifications()
     navigateTo('/backoffice/alugueres')
   } catch (err: any) {
     error.value = err?.data?.statusMessage || 'Erro ao guardar aluguer'
@@ -56,7 +59,7 @@ const submit = async () => {
 <template>
   <div class="max-w-md">
     <h1 class="text-2xl font-bold mb-1 dark:text-white">Editar Aluguer</h1>
-    <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">{{ product.name }}</p>
+    <p class="text-sm text-gray-500 dark:text-zinc-400 mb-6">{{ product.name }}</p>
 
     <form class="space-y-4" @submit.prevent="submit">
       <BaseSelect v-model="status" label="Estado" :options="statusOptions" />

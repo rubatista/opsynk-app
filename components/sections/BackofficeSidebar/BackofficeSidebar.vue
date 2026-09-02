@@ -21,7 +21,7 @@ const menuLinks = [
     icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z',
   },
   {
-    to: '/backoffice/finanças',
+    to: '/backoffice/financeiro',
     label: 'Finanças',
     icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V6m0 2v8m0 0v2m0-2c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
   },
@@ -62,10 +62,10 @@ const close = () => (sidebarOpen.value = false)
   />
 
   <aside
-    class="w-64 shrink-0 bg-white dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen flex flex-col fixed inset-y-0 left-0 z-40 rounded-r-3xl border-r border-gray-100 dark:border-gray-800 shadow-sm transform transition-transform duration-200 md:static md:translate-x-0 md:min-h-0 md:rounded-3xl md:border-0"
+    class="w-64 shrink-0 bg-white dark:bg-zinc-900 text-gray-900 dark:text-white min-h-screen flex flex-col fixed inset-y-0 left-0 z-40 rounded-r-3xl border-r border-gray-100 dark:border-zinc-800 shadow-sm transform transition-transform duration-200 md:static md:translate-x-0 md:min-h-0 md:rounded-3xl md:border-0"
     :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
   >
-    <div class="flex items-center gap-2 px-6 py-5 border-b border-gray-100 dark:border-gray-800">
+    <div class="flex items-center gap-2 px-6 py-5 border-b border-gray-100 dark:border-zinc-800">
       <span class="w-8 h-8 rounded-xl bg-brand-500 text-white flex items-center justify-center shrink-0">
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
@@ -78,13 +78,13 @@ const close = () => (sidebarOpen.value = false)
     </div>
     <nav class="flex-1 px-3 py-4 space-y-6 overflow-y-auto">
       <div>
-        <p class="px-3 mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Menu</p>
+        <p class="px-3 mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-zinc-500">Menu</p>
         <div class="space-y-1">
           <NuxtLink
             v-for="link in menuLinks"
             :key="link.to"
             :to="link.to"
-            class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition"
+            class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-gray-500 dark:text-zinc-400 hover:bg-gray-100 dark:hover:bg-zinc-800 hover:text-gray-900 dark:hover:text-white transition"
             active-class="!bg-brand-500 !text-white font-semibold"
             @click="close"
           >
@@ -97,13 +97,13 @@ const close = () => (sidebarOpen.value = false)
       </div>
 
       <div>
-        <p class="px-3 mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Geral</p>
+        <p class="px-3 mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-zinc-500">Geral</p>
         <div class="space-y-1">
           <NuxtLink
             v-for="link in generalLinks"
             :key="link.to"
             :to="link.to"
-            class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition"
+            class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-gray-500 dark:text-zinc-400 hover:bg-gray-100 dark:hover:bg-zinc-800 hover:text-gray-900 dark:hover:text-white transition"
             active-class="!bg-brand-500 !text-white font-semibold"
             @click="close"
           >

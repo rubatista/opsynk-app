@@ -35,7 +35,7 @@ const submit = async () => {
 <template>
   <div class="max-w-md">
     <h1 class="text-2xl font-bold mb-2 dark:text-white">Definições de SEO</h1>
-    <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">
+    <p class="text-sm text-gray-500 dark:text-zinc-400 mb-6">
       Título, descrição e imagem por omissão para a homepage e páginas sem SEO próprio.
     </p>
 
