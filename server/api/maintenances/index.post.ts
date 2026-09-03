@@ -10,6 +10,7 @@ export default defineEventHandler(async (event) => {
   const performedAt = typeof body?.performedAt === 'string' ? body.performedAt : ''
   const description = typeof body?.description === 'string' ? body.description.trim() : ''
   const nextDueDate = typeof body?.nextDueDate === 'string' && body.nextDueDate ? body.nextDueDate : null
+  const nextDueNotes = typeof body?.nextDueNotes === 'string' ? body.nextDueNotes.trim() || null : null
 
   if (!Number.isFinite(equipmentId) || !performedAt || !description) {
     throw createError({ statusCode: 400, statusMessage: 'equipmentId, performedAt and description are required' })
@@ -23,7 +24,7 @@ export default defineEventHandler(async (event) => {
 
   const [created] = db
     .insert(maintenances)
-    .values({ equipmentId, performedAt, description, nextDueDate })
+    .values({ equipmentId, performedAt, description, nextDueDate, nextDueNotes })
     .returning()
     .all()
 

@@ -31,10 +31,10 @@ const newLeads = leads.filter((l) => l.status === 'novo').length
 
 const pendingReceber = clientTransactions
   .filter((t) => t.type === 'a_receber' && t.status === 'pendente')
-  .reduce((sum, t) => sum + t.amount, 0)
+  .reduce((sum, t) => sum + t.remainingAmount, 0)
 const pendingPagar = clientTransactions
   .filter((t) => t.type === 'a_pagar' && t.status === 'pendente')
-  .reduce((sum, t) => sum + t.amount, 0)
+  .reduce((sum, t) => sum + t.remainingAmount, 0)
 
 const statCards = [
   { label: 'Produtos', value: String(products.length), icon: ICONS.produtos, href: '/backoffice/produtos' },
@@ -42,8 +42,13 @@ const statCards = [
   { label: 'Manutenções em 30 dias', value: String(upcomingMaintenances), icon: ICONS.manutencoes, href: '/backoffice/manutencoes' },
   { label: 'Alugueres a terminar (30 dias)', value: String(endingRentals), icon: ICONS.alugueres, href: '/backoffice/alugueres' },
   { label: 'Novos pedidos de contacto', value: String(newLeads), icon: ICONS.leads, href: '/backoffice/leads' },
-  { label: 'A receber de clientes', value: formatCurrency(pendingReceber), icon: ICONS.finanças, href: '/backoffice/finanças' },
-  { label: 'A pagar a clientes', value: formatCurrency(pendingPagar), icon: ICONS.finanças, href: '/backoffice/finanças ' },
+  {
+    label: 'Finanças',
+    value: `${formatCurrency(pendingReceber)} / ${formatCurrency(pendingPagar)}`,
+    hint: 'A receber / A pagar',
+    icon: ICONS.finanças,
+    href: '/backoffice/financeiro',
+  },
 ]
 
 // Próximos prazos: manutenções + alugueres ativos, combinados e ordenados por data
@@ -84,35 +89,38 @@ const aluguerPct = (aluguerCount / productTypeTotal) * 100
 
 <template>
   <div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-4">
-      <NuxtLink v-for="card in statCards" :key="card.label" :to="card.href" class="block">
-        <BaseCard class="h-full hover:shadow-md transition">
-          <div class="flex items-center justify-between mb-3">
-            <span class="w-9 h-9 rounded-xl bg-brand-500/10 text-brand-500 flex items-center justify-center">
-              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" :d="card.icon" />
-              </svg>
-            </span>
-            <span class="w-6 h-6 rounded-full border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-400">
-              <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M7 17L17 7M17 7H9M17 7v8" />
-              </svg>
-            </span>
-          </div>
-          <p class="text-sm text-gray-500 dark:text-gray-400">{{ card.label }}</p>
-          <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">{{ card.value }}</p>
-        </BaseCard>
-      </NuxtLink>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-6">
-      <div class="lg:col-span-2">
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-4">
+      <div class="lg:col-span-3">
         <VisitsChart />
       </div>
 
-      <div class="flex flex-col gap-4">
+      <div class="lg:col-span-2 grid grid-cols-2 gap-4">
+        <NuxtLink v-for="card in statCards" :key="card.label" :to="card.href" class="block">
+          <BaseCard class="h-full hover:shadow-md transition">
+            <div class="flex items-center justify-between mb-3">
+              <span class="w-9 h-9 rounded-xl bg-brand-500/10 text-brand-500 flex items-center justify-center">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" :d="card.icon" />
+                </svg>
+              </span>
+              <span class="w-6 h-6 rounded-full border border-gray-200 dark:border-zinc-700 flex items-center justify-center text-gray-400">
+                <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M7 17L17 7M17 7H9M17 7v8" />
+                </svg>
+              </span>
+            </div>
+            <p class="text-xs text-gray-500 dark:text-zinc-400">{{ card.label }}</p>
+            <p class="text-lg font-bold text-gray-900 dark:text-white mt-1">{{ card.value }}</p>
+            <p v-if="card.hint" class="text-[11px] text-gray-400 mt-0.5">{{ card.hint }}</p>
+          </BaseCard>
+        </NuxtLink>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6">
+      <div>
         <BaseCard>
-          <p class="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">Próximo Prazo</p>
+          <p class="text-sm font-semibold text-gray-500 dark:text-zinc-400 mb-3">Próximo Prazo</p>
           <template v-if="nextDeadline">
             <div class="flex items-center gap-3 mb-4">
               <span class="w-10 h-10 rounded-xl bg-brand-500/10 text-brand-500 flex items-center justify-center shrink-0">
@@ -131,33 +139,33 @@ const aluguerPct = (aluguerCount / productTypeTotal) * 100
           </template>
           <p v-else class="text-sm text-gray-400">Sem prazos agendados.</p>
         </BaseCard>
-
-        <BaseCard>
-          <p class="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">Próximos Prazos</p>
-          <p v-if="!deadlineList.length" class="text-sm text-gray-400">Sem prazos agendados.</p>
-          <ul v-else class="space-y-3">
-            <li v-for="item in deadlineList" :key="item.href">
-              <NuxtLink :to="item.href" class="flex items-center gap-3 group">
-                <span class="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 flex items-center justify-center shrink-0">
-                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" :d="item.icon" />
-                  </svg>
-                </span>
-                <span class="flex-1 min-w-0">
-                  <span class="block text-sm text-gray-900 dark:text-white truncate group-hover:text-brand-500 transition">{{ item.label }}</span>
-                  <span class="block text-xs" :class="isOverdue(item.date) ? 'text-red-500 font-semibold' : 'text-gray-400'">{{ item.date }}</span>
-                </span>
-              </NuxtLink>
-            </li>
-          </ul>
-        </BaseCard>
       </div>
+
+      <BaseCard>
+        <p class="text-sm font-semibold text-gray-500 dark:text-zinc-400 mb-3">Próximos Prazos</p>
+        <p v-if="!deadlineList.length" class="text-sm text-gray-400">Sem prazos agendados.</p>
+        <ul v-else class="space-y-3">
+          <li v-for="item in deadlineList" :key="item.href">
+            <NuxtLink :to="item.href" class="flex items-center gap-3 group">
+              <span class="w-8 h-8 rounded-lg bg-gray-100 dark:bg-zinc-800 text-gray-500 dark:text-zinc-400 flex items-center justify-center shrink-0">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" :d="item.icon" />
+                </svg>
+              </span>
+              <span class="flex-1 min-w-0">
+                <span class="block text-sm text-gray-900 dark:text-white truncate group-hover:text-brand-500 transition">{{ item.label }}</span>
+                <span class="block text-xs" :class="isOverdue(item.date) ? 'text-red-500 font-semibold' : 'text-gray-400'">{{ item.date }}</span>
+              </span>
+            </NuxtLink>
+          </li>
+        </ul>
+      </BaseCard>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-6">
       <BaseCard class="lg:col-span-2">
         <div class="flex items-center justify-between mb-4">
-          <p class="text-sm font-semibold text-gray-500 dark:text-gray-400">Últimos Pedidos de Contacto</p>
+          <p class="text-sm font-semibold text-gray-500 dark:text-zinc-400">Últimos Pedidos de Contacto</p>
           <NuxtLink to="/backoffice/leads" class="text-xs text-brand-500 hover:underline">Ver todos</NuxtLink>
         </div>
         <p v-if="!recentLeads.length" class="text-sm text-gray-400">Ainda não há pedidos de contacto.</p>
@@ -174,7 +182,7 @@ const aluguerPct = (aluguerCount / productTypeTotal) * 100
             </div>
             <span
               class="shrink-0 inline-block px-2 py-0.5 rounded-full text-xs font-semibold"
-              :class="lead.status === 'novo' ? 'bg-brand-100 text-brand-700 dark:bg-brand-500/20 dark:text-brand-300' : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'"
+              :class="lead.status === 'novo' ? 'bg-brand-100 text-brand-700 dark:bg-brand-500/20 dark:text-brand-300' : 'bg-gray-100 text-gray-700 dark:bg-zinc-800 dark:text-zinc-300'"
             >
               {{ lead.status === 'novo' ? 'Novo' : 'Contactado' }}
             </span>
@@ -184,17 +192,17 @@ const aluguerPct = (aluguerCount / productTypeTotal) * 100
 
       <div class="flex flex-col gap-4">
         <BaseCard>
-          <p class="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">Produtos por Tipo</p>
-          <div class="flex h-3 rounded-full overflow-hidden gap-[2px] bg-gray-100 dark:bg-gray-800">
+          <p class="text-sm font-semibold text-gray-500 dark:text-zinc-400 mb-3">Produtos por Tipo</p>
+          <div class="flex h-3 rounded-full overflow-hidden gap-[2px] bg-gray-100 dark:bg-zinc-800">
             <div class="bg-brand-500 rounded-full" :style="{ width: vendaPct + '%' }" />
-            <div class="bg-gray-300 dark:bg-gray-600 rounded-full" :style="{ width: aluguerPct + '%' }" />
+            <div class="bg-gray-300 dark:bg-zinc-600 rounded-full" :style="{ width: aluguerPct + '%' }" />
           </div>
           <div class="flex items-center justify-between mt-3 text-sm">
-            <span class="flex items-center gap-2 text-gray-600 dark:text-gray-300">
+            <span class="flex items-center gap-2 text-gray-600 dark:text-zinc-300">
               <span class="w-2.5 h-2.5 rounded-full bg-brand-500" /> Venda ({{ vendaCount }})
             </span>
-            <span class="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-              <span class="w-2.5 h-2.5 rounded-full bg-gray-300 dark:bg-gray-600" /> Aluguer ({{ aluguerCount }})
+            <span class="flex items-center gap-2 text-gray-600 dark:text-zinc-300">
+              <span class="w-2.5 h-2.5 rounded-full bg-gray-300 dark:bg-zinc-600" /> Aluguer ({{ aluguerCount }})
             </span>
           </div>
         </BaseCard>

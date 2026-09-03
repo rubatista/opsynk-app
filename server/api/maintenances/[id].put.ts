@@ -17,6 +17,9 @@ export default defineEventHandler(async (event) => {
   if (body?.nextDueDate !== undefined) {
     updates.nextDueDate = typeof body.nextDueDate === 'string' && body.nextDueDate ? body.nextDueDate : null
   }
+  if (body?.nextDueNotes !== undefined) {
+    updates.nextDueNotes = typeof body.nextDueNotes === 'string' ? body.nextDueNotes.trim() || null : null
+  }
 
   const db = useDatabase()
   const [updated] = db

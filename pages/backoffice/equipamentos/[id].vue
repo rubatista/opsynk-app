@@ -2,6 +2,7 @@
 import BaseInput from '~/components/atoms/BaseInput/BaseInput.vue'
 import BaseSelect from '~/components/atoms/BaseSelect/BaseSelect.vue'
 import BaseButton from '~/components/atoms/BaseButton/BaseButton.vue'
+import BaseCard from '~/components/atoms/BaseCard/BaseCard.vue'
 
 definePageMeta({ layout: 'backoffice', title: 'Editar Equipamento' })
 
@@ -62,72 +63,79 @@ const submit = async () => {
 </script>
 
 <template>
-  <div class="max-w-md">
+  <div class="max-w-5xl">
     <h1 class="text-2xl font-bold mb-6 dark:text-white">Editar Equipamento</h1>
 
-    <form class="space-y-4" @submit.prevent="submit">
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <BaseInput v-model="brand" label="Marca" required />
-        <BaseInput v-model="model" label="Modelo" required />
-      </div>
-      <BaseInput v-model="serialNumber" label="Nº de Série" />
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+      <form class="lg:col-span-2 space-y-4" @submit.prevent="submit">
+        <BaseCard>
+          <div class="space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <BaseInput v-model="brand" label="Marca" required />
+              <BaseInput v-model="model" label="Modelo" required />
+            </div>
+            <BaseInput v-model="serialNumber" label="Nº de Série" />
 
-      <div>
-        <BaseSelect v-model="clientId" label="Cliente registado (opcional)" :options="clientOptions" />
-        <p class="text-xs text-gray-400 mt-1">
-          Se não escolheres um cliente, podes preencher o nome/contacto abaixo para um caso pontual.
-        </p>
-      </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <BaseInput v-model="ownerName" label="Nome (se não tiver ficha de cliente)" placeholder="Deixar em branco se for stock próprio" />
-        <BaseInput v-model="ownerContact" label="Contacto" />
-      </div>
+            <div>
+              <BaseSelect v-model="clientId" label="Cliente registado (opcional)" :options="clientOptions" />
+              <p class="text-xs text-gray-400 mt-1">
+                Se não escolheres um cliente, podes preencher o nome/contacto abaixo para um caso pontual.
+              </p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <BaseInput v-model="ownerName" label="Nome (se não tiver ficha de cliente)" placeholder="Deixar em branco se for stock próprio" />
+              <BaseInput v-model="ownerContact" label="Contacto" />
+            </div>
 
-      <BaseSelect v-model="productId" label="Produto associado (opcional)" :options="productOptions" />
-      <BaseInput v-model="notes" label="Notas" multiline />
-
-      <p v-if="error" class="text-sm text-red-600 dark:text-red-400">{{ error }}</p>
-
-      <div class="flex gap-3">
-        <BaseButton type="submit" variant="brand">Guardar</BaseButton>
-        <BaseButton to="/backoffice/equipamentos" variant="secondary">Cancelar</BaseButton>
-      </div>
-    </form>
-
-    <div class="mt-10">
-      <div class="flex items-center justify-between mb-3">
-        <h2 class="text-lg font-bold dark:text-white">Manutenções</h2>
-        <NuxtLink :to="`/backoffice/manutencoes/novo?equipmentId=${id}`" class="text-sm text-brand-500 hover:underline">
-          + Nova Manutenção
-        </NuxtLink>
-      </div>
-
-      <p v-if="!maintenanceHistory.length" class="text-sm text-gray-500 dark:text-gray-400">
-        Ainda não há manutenções registadas.
-      </p>
-
-      <ul v-else class="space-y-3">
-        <li
-          v-for="m in maintenanceHistory"
-          :key="m.id"
-          class="border border-gray-200 dark:border-gray-800 rounded-lg p-3 text-sm"
-        >
-          <div class="flex items-center justify-between">
-            <span class="font-semibold dark:text-white">{{ m.performedAt }}</span>
-            <NuxtLink :to="`/backoffice/manutencoes/${m.id}`" class="text-xs text-brand-500 hover:underline">
-              Editar
-            </NuxtLink>
+            <BaseSelect v-model="productId" label="Produto associado (opcional)" :options="productOptions" />
+            <BaseInput v-model="notes" label="Notas" multiline />
           </div>
-          <p class="text-gray-600 dark:text-gray-300 mt-1">{{ m.description }}</p>
-          <p
-            v-if="m.nextDueDate"
-            class="text-xs mt-2"
-            :class="isMaintenanceOverdue(m.nextDueDate) ? 'text-red-600 dark:text-red-400 font-semibold' : 'text-gray-400'"
+        </BaseCard>
+
+        <p v-if="error" class="text-sm text-red-600 dark:text-red-400">{{ error }}</p>
+
+        <div class="flex gap-3">
+          <BaseButton type="submit" variant="brand">Guardar</BaseButton>
+          <BaseButton to="/backoffice/equipamentos" variant="secondary">Cancelar</BaseButton>
+        </div>
+      </form>
+
+      <BaseCard>
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="font-semibold text-sm dark:text-white">Manutenções</h2>
+          <NuxtLink :to="`/backoffice/manutencoes/novo?equipmentId=${id}`" class="text-xs text-brand-500 hover:underline">
+            + Nova
+          </NuxtLink>
+        </div>
+
+        <p v-if="!maintenanceHistory.length" class="text-sm text-gray-500 dark:text-zinc-400">
+          Ainda não há manutenções registadas.
+        </p>
+
+        <ul v-else class="space-y-3">
+          <li
+            v-for="m in maintenanceHistory"
+            :key="m.id"
+            class="border border-gray-200 dark:border-zinc-800 rounded-lg p-3 text-sm"
           >
-            Próxima manutenção: {{ m.nextDueDate }}
-          </p>
-        </li>
-      </ul>
+            <div class="flex items-center justify-between">
+              <span class="font-semibold dark:text-white">{{ m.performedAt }}</span>
+              <NuxtLink :to="`/backoffice/manutencoes/${m.id}`" class="text-xs text-brand-500 hover:underline">
+                Editar
+              </NuxtLink>
+            </div>
+            <p class="text-gray-600 dark:text-zinc-300 mt-1">{{ m.description }}</p>
+            <div
+              v-if="m.nextDueDate"
+              class="text-xs mt-2"
+              :class="isMaintenanceOverdue(m.nextDueDate) ? 'text-red-600 dark:text-red-400 font-semibold' : 'text-gray-400'"
+            >
+              Próxima manutenção: {{ m.nextDueDate }}
+              <span v-if="m.nextDueNotes" class="block text-gray-500 dark:text-zinc-400 font-normal mt-0.5">{{ m.nextDueNotes }}</span>
+            </div>
+          </li>
+        </ul>
+      </BaseCard>
     </div>
   </div>
 </template>

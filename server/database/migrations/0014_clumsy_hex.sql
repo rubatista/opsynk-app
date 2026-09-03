@@ -1,0 +1,1 @@
+ALTER TABLE `maintenances` ADD `next_due_notes` text;

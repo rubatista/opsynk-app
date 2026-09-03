@@ -7,11 +7,14 @@ export default defineEventHandler((event) => {
 
   const query = getQuery(event)
   const productId = query.productId ? Number(query.productId) : null
+  const clientId = query.clientId ? Number(query.clientId) : null
 
   const db = useDatabase()
   const rows = productId
     ? db.select().from(rentals).where(eq(rentals.productId, productId)).all()
-    : db.select().from(rentals).all()
+    : clientId
+      ? db.select().from(rentals).where(eq(rentals.clientId, clientId)).all()
+      : db.select().from(rentals).all()
 
   const productRows = db.select().from(products).all()
   const productMap = new Map(productRows.map((product: any) => [product.id, product]))
