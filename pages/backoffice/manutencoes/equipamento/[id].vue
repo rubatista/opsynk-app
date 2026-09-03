@@ -121,6 +121,23 @@ const removeMaintenance = async (maintenanceId: number) => {
         <p v-if="nextMaintenance.nextDueNotes" class="text-sm text-gray-600 dark:text-zinc-300 mt-1">
           {{ nextMaintenance.nextDueNotes }}
         </p>
+        <NuxtLink
+          :to="{
+            path: '/backoffice/documentos/novo',
+            query: {
+              type: 'orcamento',
+              sourceType: 'manutencao',
+              sourceId: nextMaintenance.id,
+              clientId: equipment.client?.id || undefined,
+              buyerName: equipment.ownerName || undefined,
+              description: nextMaintenance.nextDueNotes || `Manutenção — ${equipment.brand} ${equipment.model}`,
+              date: nextMaintenance.nextDueDate,
+            },
+          }"
+          class="inline-block text-xs text-brand-500 hover:underline mt-2"
+        >
+          Emitir Orçamento
+        </NuxtLink>
       </template>
       <p v-else class="text-sm text-gray-500 dark:text-zinc-400">
         Sem próxima manutenção agendada. Define a data e o que é preciso fazer ao registar ou editar uma manutenção.
@@ -142,6 +159,23 @@ const removeMaintenance = async (maintenanceId: number) => {
         <div class="flex items-center justify-between">
           <span class="font-semibold dark:text-white">{{ m.performedAt }}</span>
           <div class="space-x-3">
+            <NuxtLink
+              :to="{
+                path: '/backoffice/documentos/novo',
+                query: {
+                  type: 'fatura',
+                  sourceType: 'manutencao',
+                  sourceId: m.id,
+                  clientId: equipment.client?.id || undefined,
+                  buyerName: equipment.ownerName || undefined,
+                  description: m.description,
+                  date: m.performedAt,
+                },
+              }"
+              class="text-xs text-brand-500 hover:underline"
+            >
+              Emitir Fatura
+            </NuxtLink>
             <NuxtLink :to="`/backoffice/manutencoes/${m.id}`" class="text-xs text-brand-500 hover:underline">Editar</NuxtLink>
             <button class="text-xs text-red-600 hover:underline" @click="removeMaintenance(m.id)">Apagar</button>
           </div>

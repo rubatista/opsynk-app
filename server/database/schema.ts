@@ -42,6 +42,11 @@ export const siteSettings = sqliteTable('site_settings', {
   metaTitle: text('meta_title'),
   metaDescription: text('meta_description'),
   ogImage: text('og_image'),
+  companyName: text('company_name'),
+  companyNif: text('company_nif'),
+  companyAddress: text('company_address'),
+  companyPhone: text('company_phone'),
+  companyEmail: text('company_email'),
   updatedAt: text('updated_at').notNull().default(sql`(current_timestamp)`),
 })
 
@@ -153,6 +158,22 @@ export const transactionPayments = sqliteTable('transaction_payments', {
   transactionId: integer('transaction_id')
     .notNull()
     .references(() => clientTransactions.id, { onDelete: 'cascade' }),
+  amount: real('amount').notNull(),
+  date: text('date').notNull(),
+  notes: text('notes'),
+  createdAt: text('created_at').notNull().default(sql`(current_timestamp)`),
+})
+
+export const documents = sqliteTable('documents', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  type: text('type').notNull(),
+  number: text('number').notNull().unique(),
+  sourceType: text('source_type'),
+  sourceId: integer('source_id'),
+  clientId: integer('client_id').references(() => clients.id, { onDelete: 'set null' }),
+  buyerName: text('buyer_name'),
+  buyerContact: text('buyer_contact'),
+  description: text('description').notNull(),
   amount: real('amount').notNull(),
   date: text('date').notNull(),
   notes: text('notes'),

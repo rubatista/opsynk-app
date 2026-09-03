@@ -26,6 +26,11 @@ const menuLinks = [
     icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V6m0 2v8m0 0v2m0-2c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
   },
   {
+    to: '/backoffice/documentos',
+    label: 'Faturas e Orçamentos',
+    icon: 'M9 12h6m-6 4h3m-7 4h10a2 2 0 002-2V7.414a1 1 0 00-.293-.707l-3.414-3.414A1 1 0 0012.586 3H6a2 2 0 00-2 2v14a2 2 0 002 2z',
+  },
+  {
     to: '/backoffice/equipamentos',
     label: 'Equipamentos',
     icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z',
@@ -45,7 +50,7 @@ const generalLinks = [
   },
   {
     to: '/backoffice/definicoes',
-    label: 'SEO',
+    label: 'Definições',
     icon: 'M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z',
   },
 ]

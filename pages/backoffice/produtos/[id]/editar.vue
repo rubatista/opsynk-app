@@ -282,6 +282,25 @@ const submit = async () => {
               Alugado{{ activeRental.client ? ` a ${activeRental.client.name}` : activeRental.renterName ? ` a ${activeRental.renterName}` : '' }}{{ activeRental.endDate ? ` até ${activeRental.endDate}` : '' }}
             </span>
             <span v-else class="text-gray-500 dark:text-zinc-400">Disponível</span>
+            <NuxtLink
+              v-if="activeRental"
+              :to="{
+                path: '/backoffice/documentos/novo',
+                query: {
+                  type: 'fatura',
+                  sourceType: 'aluguer',
+                  sourceId: activeRental.id,
+                  clientId: activeRental.clientId || undefined,
+                  buyerName: activeRental.renterName || undefined,
+                  buyerContact: activeRental.renterContact || undefined,
+                  description: `Aluguer de ${name} (${activeRental.startDate} — ${activeRental.endDate || 'sem data'})`,
+                  amount: price,
+                },
+              }"
+              class="block text-xs text-brand-500 hover:underline mt-1"
+            >
+              Emitir Fatura
+            </NuxtLink>
           </p>
 
           <p v-if="!rentalHistory.length" class="text-sm text-gray-500 dark:text-zinc-400">
@@ -317,7 +336,28 @@ const submit = async () => {
               Falta receber {{ formatCurrency(sale.amountDue) }} — já entrou em Finanças.
             </p>
             <p v-if="sale.notes" class="text-sm text-gray-600 dark:text-zinc-300 mb-3">{{ sale.notes }}</p>
-            <button class="text-sm text-red-600 hover:underline" @click="cancelSale">Anular Venda</button>
+            <div class="space-x-3">
+              <NuxtLink
+                :to="{
+                  path: '/backoffice/documentos/novo',
+                  query: {
+                    type: 'fatura',
+                    sourceType: 'venda',
+                    sourceId: sale.id,
+                    clientId: sale.clientId || undefined,
+                    buyerName: sale.buyerName || undefined,
+                    buyerContact: sale.buyerContact || undefined,
+                    description: `Venda de ${name}`,
+                    amount: sale.price,
+                    date: sale.date,
+                  },
+                }"
+                class="text-sm text-brand-500 hover:underline"
+              >
+                Emitir Fatura
+              </NuxtLink>
+              <button class="text-sm text-red-600 hover:underline" @click="cancelSale">Anular Venda</button>
+            </div>
           </div>
 
           <form v-else class="space-y-3" @submit.prevent="registerSale">
