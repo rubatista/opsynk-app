@@ -1,11 +1,16 @@
+<script setup lang="ts">
+const { data: site } = await useSiteSettings()
+const year = new Date().getFullYear()
+</script>
+
 <template>
   <footer class="bg-gray-950 text-gray-400">
     <div class="max-w-6xl mx-auto px-6 py-12">
       <div class="flex flex-col items-center gap-6 text-center">
         <span class="font-black text-lg tracking-tight text-white">
-          OPSYNK <span class="text-brand-500">Empilhadores</span>
+          {{ site?.name }}
         </span>
-        <p class="text-sm max-w-md">Venda, aluguer e manutenção de empilhadores.</p>
+        <p v-if="site?.metaDescription" class="text-sm max-w-md">{{ site.metaDescription }}</p>
 
         <nav class="flex flex-wrap justify-center gap-6 text-sm font-semibold">
           <NuxtLink to="/" class="hover:text-white transition">Início</NuxtLink>
@@ -16,7 +21,7 @@
       </div>
 
       <div class="border-t border-white/10 mt-8 pt-6 text-center text-xs">
-        © 2026 Opsynk Empilhadores. Todos os direitos reservados.
+        © {{ year }} {{ site?.name }}. Todos os direitos reservados.
       </div>
     </div>
   </footer>

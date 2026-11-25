@@ -1,9 +1,9 @@
-import { eq, desc } from 'drizzle-orm'
+import { and, eq, desc } from 'drizzle-orm'
 import { useDatabase } from '../../../database/client'
 import { clientNotes } from '../../../database/schema'
 
 export default defineEventHandler((event) => {
-  requireUser(event)
+  const { tenantId } = requireTenant(event)
 
   const clientId = Number(getRouterParam(event, 'id'))
   if (!Number.isFinite(clientId)) {
@@ -14,7 +14,7 @@ export default defineEventHandler((event) => {
   return db
     .select()
     .from(clientNotes)
-    .where(eq(clientNotes.clientId, clientId))
+    .where(and(eq(clientNotes.clientId, clientId), eq(clientNotes.tenantId, tenantId)))
     .orderBy(desc(clientNotes.createdAt))
     .all()
 })

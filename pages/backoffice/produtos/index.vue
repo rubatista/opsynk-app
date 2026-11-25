@@ -4,7 +4,10 @@ import BaseBadge from '~/components/atoms/BaseBadge/BaseBadge.vue'
 
 definePageMeta({ layout: 'backoffice', title: 'Produtos' })
 
-const { data: products, refresh } = await useFetch('/api/products')
+const products = ref(await useAuthFetch<any[]>('/api/products'))
+const refresh = async () => {
+  products.value = await useAuthFetch<any[]>('/api/products')
+}
 const rentals = ref(await useAuthFetch<any[]>('/api/rentals'))
 const isRented = (productId: number) => rentals.value.some((rental) => rental.productId === productId && rental.status === 'ativo')
 

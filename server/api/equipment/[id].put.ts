@@ -1,9 +1,9 @@
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { useDatabase } from '../../database/client'
-import { equipment } from '../../database/schema'
+import { equipment, products, clients } from '../../database/schema'
 
 export default defineEventHandler(async (event) => {
-  requireUser(event)
+  const { tenantId } = requireTenant(event)
 
   const id = Number(getRouterParam(event, 'id'))
   if (!Number.isFinite(id)) {
@@ -28,23 +28,22 @@ export default defineEventHandler(async (event) => {
     updates.notes = typeof body.notes === 'string' ? body.notes.trim() || null : null
   }
   if (body?.productId !== undefined) {
-    updates.productId = body.productId ? Number(body.productId) : null
+    updates.productId = ownedIdOrNull(products, body.productId, tenantId, 'Produto')
   }
   if (body?.clientId !== undefined) {
-    updates.clientId = body.clientId ? Number(body.clientId) : null
+    updates.clientId = ownedIdOrNull(clients, body.clientId, tenantId, 'Cliente')
   }
+
+  const existing = requireOwned(equipment, id, tenantId, 'Equipment not found')
+  if (!Object.keys(updates).length) return existing
 
   const db = useDatabase()
   const [updated] = db
     .update(equipment)
     .set(updates)
-    .where(eq(equipment.id, id))
+    .where(and(eq(equipment.id, id), eq(equipment.tenantId, tenantId)))
     .returning()
     .all()
-
-  if (!updated) {
-    throw createError({ statusCode: 404, statusMessage: 'Equipment not found' })
-  }
 
   return updated
 })

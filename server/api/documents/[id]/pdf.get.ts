@@ -4,21 +4,18 @@ import { useDatabase } from '../../../database/client'
 import { documents, clients, siteSettings } from '../../../database/schema'
 
 export default defineEventHandler(async (event) => {
-  requireUser(event)
+  const { tenantId } = requireTenant(event)
 
   const id = Number(getRouterParam(event, 'id'))
   if (!Number.isFinite(id)) {
     throw createError({ statusCode: 400, statusMessage: 'Invalid document id' })
   }
 
-  const db = useDatabase()
-  const doc = db.select().from(documents).where(eq(documents.id, id)).get()
-  if (!doc) {
-    throw createError({ statusCode: 404, statusMessage: 'Document not found' })
-  }
+  const doc = requireOwned(documents, id, tenantId, 'Document not found')
+  const client = doc.clientId ? findOwned(clients, doc.clientId, tenantId) ?? null : null
 
-  const client = doc.clientId ? db.select().from(clients).where(eq(clients.id, doc.clientId)).get() : null
-  const company = db.select().from(siteSettings).get() || {}
+  const db = useDatabase()
+  const company = db.select().from(siteSettings).where(eq(siteSettings.tenantId, tenantId)).get() || {}
 
   const pdf = new PDFDocument({ size: 'A4', margin: 50 })
   const chunks: Buffer[] = []

@@ -1,5 +1,10 @@
 <script setup lang="ts">
-const menuLinks = [
+import { useAuthStore } from '~/stores/auth'
+
+const auth = useAuthStore()
+
+// `module`: only shown when that optional module is enabled for the company (set in /admin).
+const menuLinks: { to: string; label: string; icon: string; module?: string }[] = [
   {
     to: '/backoffice/dashboard',
     label: 'Dashboard',
@@ -13,6 +18,7 @@ const menuLinks = [
   {
     to: '/backoffice/alugueres',
     label: 'Alugueres',
+    module: 'alugueres',
     icon: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z',
   },
   {
@@ -33,11 +39,13 @@ const menuLinks = [
   {
     to: '/backoffice/equipamentos',
     label: 'Equipamentos',
+    module: 'equipamentos',
     icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z',
   },
   {
     to: '/backoffice/manutencoes',
     label: 'Manutenções',
+    module: 'manutencoes',
     icon: 'M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z',
   },
 ]
@@ -54,6 +62,8 @@ const generalLinks = [
     icon: 'M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z',
   },
 ]
+
+const visibleMenuLinks = computed(() => menuLinks.filter((link) => !link.module || auth.hasModule(link.module)))
 
 const sidebarOpen = useState('backofficeSidebarOpen', () => false)
 const close = () => (sidebarOpen.value = false)
@@ -78,7 +88,7 @@ const close = () => (sidebarOpen.value = false)
       </span>
       <span class="font-black tracking-tight leading-tight">
         OPSYNK<br />
-        <span class="text-brand-500 font-semibold text-xs tracking-normal">Empilhadores</span>
+        <span class="text-brand-500 font-semibold text-xs tracking-normal">{{ auth.tenant?.name }}</span>
       </span>
     </div>
     <nav class="flex-1 px-3 py-4 space-y-6 overflow-y-auto">
@@ -86,7 +96,7 @@ const close = () => (sidebarOpen.value = false)
         <p class="px-3 mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-zinc-500">Menu</p>
         <div class="space-y-1">
           <NuxtLink
-            v-for="link in menuLinks"
+            v-for="link in visibleMenuLinks"
             :key="link.to"
             :to="link.to"
             class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-gray-500 dark:text-zinc-400 hover:bg-gray-100 dark:hover:bg-zinc-800 hover:text-gray-900 dark:hover:text-white transition"

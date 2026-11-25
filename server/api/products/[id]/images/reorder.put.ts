@@ -1,9 +1,9 @@
-import { eq, asc } from 'drizzle-orm'
+import { and, eq, asc } from 'drizzle-orm'
 import { useDatabase } from '../../../../database/client'
 import { productImages } from '../../../../database/schema'
 
 export default defineEventHandler(async (event) => {
-  requireUser(event)
+  const { tenantId } = requireTenant(event)
 
   const productId = Number(getRouterParam(event, 'id'))
   if (!Number.isFinite(productId)) {
@@ -17,12 +17,9 @@ export default defineEventHandler(async (event) => {
   }
 
   const db = useDatabase()
+  const ownImages = and(eq(productImages.productId, productId), eq(productImages.tenantId, tenantId))
 
-  const existing = db
-    .select()
-    .from(productImages)
-    .where(eq(productImages.productId, productId))
-    .all()
+  const existing = db.select().from(productImages).where(ownImages).all()
 
   const existingIds = new Set(existing.map((image: any) => image.id))
   const isValidReorder = order.length === existing.length && order.every((imageId: number) => existingIds.has(imageId))
@@ -33,14 +30,12 @@ export default defineEventHandler(async (event) => {
 
   db.transaction((tx: any) => {
     order.forEach((imageId: number, index: number) => {
-      tx.update(productImages).set({ position: index }).where(eq(productImages.id, imageId)).run()
+      tx.update(productImages)
+        .set({ position: index })
+        .where(and(eq(productImages.id, imageId), eq(productImages.tenantId, tenantId)))
+        .run()
     })
   })
 
-  return db
-    .select()
-    .from(productImages)
-    .where(eq(productImages.productId, productId))
-    .orderBy(asc(productImages.position))
-    .all()
+  return db.select().from(productImages).where(ownImages).orderBy(asc(productImages.position)).all()
 })

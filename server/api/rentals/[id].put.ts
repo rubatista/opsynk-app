@@ -1,11 +1,11 @@
 import { eq, and, ne } from 'drizzle-orm'
 import { useDatabase } from '../../database/client'
-import { rentals } from '../../database/schema'
+import { rentals, clients } from '../../database/schema'
 
 const STATUSES = ['ativo', 'terminado'] as const
 
 export default defineEventHandler(async (event) => {
-  requireUser(event)
+  const { tenantId } = requireTenant(event)
 
   const id = Number(getRouterParam(event, 'id'))
   if (!Number.isFinite(id)) {
@@ -15,10 +15,7 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event)
   const db = useDatabase()
 
-  const existing = db.select().from(rentals).where(eq(rentals.id, id)).get()
-  if (!existing) {
-    throw createError({ statusCode: 404, statusMessage: 'Rental not found' })
-  }
+  const existing = requireOwned(rentals, id, tenantId, 'Rental not found')
 
   const updates: Record<string, any> = {}
   if (typeof body?.startDate === 'string' && body.startDate) updates.startDate = body.startDate
@@ -33,7 +30,14 @@ export default defineEventHandler(async (event) => {
       const activeRental = db
         .select()
         .from(rentals)
-        .where(and(eq(rentals.productId, existing.productId), eq(rentals.status, 'ativo'), ne(rentals.id, id)))
+        .where(
+          and(
+            eq(rentals.tenantId, tenantId),
+            eq(rentals.productId, existing.productId),
+            eq(rentals.status, 'ativo'),
+            ne(rentals.id, id)
+          )
+        )
         .get()
       if (activeRental) {
         throw createError({ statusCode: 400, statusMessage: 'Este produto já está alugado.' })
@@ -41,7 +45,7 @@ export default defineEventHandler(async (event) => {
     }
     updates.status = body.status
   }
-  if (body?.clientId !== undefined) updates.clientId = body.clientId ? Number(body.clientId) : null
+  if (body?.clientId !== undefined) updates.clientId = ownedIdOrNull(clients, body.clientId, tenantId, 'Cliente')
   if (body?.renterName !== undefined) {
     updates.renterName = typeof body.renterName === 'string' ? body.renterName.trim() || null : null
   }
@@ -50,7 +54,14 @@ export default defineEventHandler(async (event) => {
   }
   if (body?.notes !== undefined) updates.notes = typeof body.notes === 'string' ? body.notes.trim() || null : null
 
-  const [updated] = db.update(rentals).set(updates).where(eq(rentals.id, id)).returning().all()
+  if (!Object.keys(updates).length) return existing
+
+  const [updated] = db
+    .update(rentals)
+    .set(updates)
+    .where(and(eq(rentals.id, id), eq(rentals.tenantId, tenantId)))
+    .returning()
+    .all()
 
   return updated
 })

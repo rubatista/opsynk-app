@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs'
 import { eq } from 'drizzle-orm'
 import { useDatabase } from '../../database/client'
-import { users } from '../../database/schema'
+import { tenants, users } from '../../database/schema'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
@@ -19,10 +19,17 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 401, statusMessage: 'Invalid credentials' })
   }
 
-  const access_token = signToken({ sub: user.id, email: user.email })
+  const tenant = user.tenantId ? db.select().from(tenants).where(eq(tenants.id, user.tenantId)).get() : null
+  if (user.role !== 'superadmin' && tenant?.status !== 'ativo') {
+    throw createError({ statusCode: 403, statusMessage: 'Conta suspensa. Contacte o suporte.' })
+  }
+
+  const role = user.role === 'superadmin' ? 'superadmin' : 'admin'
+  const access_token = signToken({ sub: user.id, email: user.email, role, tenantId: user.tenantId })
 
   return {
     access_token,
-    user: { id: user.id, email: user.email, name: user.name },
+    user: { id: user.id, email: user.email, name: user.name, role },
+    tenant: tenant ? publicTenantInfo(tenant) : null,
   }
 })

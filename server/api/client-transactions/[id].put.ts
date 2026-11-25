@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { useDatabase } from '../../database/client'
 import { clientTransactions } from '../../database/schema'
 
@@ -6,7 +6,7 @@ const TYPES = ['a_receber', 'a_pagar'] as const
 const STATUSES = ['pendente', 'pago'] as const
 
 export default defineEventHandler(async (event) => {
-  requireUser(event)
+  const { tenantId } = requireTenant(event)
 
   const id = Number(getRouterParam(event, 'id'))
   if (!Number.isFinite(id)) {
@@ -38,17 +38,16 @@ export default defineEventHandler(async (event) => {
   if (typeof body?.description === 'string' && body.description.trim()) updates.description = body.description.trim()
   if (typeof body?.date === 'string' && body.date) updates.date = body.date
 
+  const existing = requireOwned(clientTransactions, id, tenantId, 'Transaction not found')
+  if (!Object.keys(updates).length) return existing
+
   const db = useDatabase()
   const [updated] = db
     .update(clientTransactions)
     .set(updates)
-    .where(eq(clientTransactions.id, id))
+    .where(and(eq(clientTransactions.id, id), eq(clientTransactions.tenantId, tenantId)))
     .returning()
     .all()
-
-  if (!updated) {
-    throw createError({ statusCode: 404, statusMessage: 'Transaction not found' })
-  }
 
   return updated
 })

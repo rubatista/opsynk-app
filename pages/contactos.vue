@@ -21,7 +21,7 @@ const submit = async () => {
 
   submitting.value = true
   try {
-    await $fetch('/api/leads', {
+    await $fetch('/api/site/leads', {
       method: 'POST',
       body: {
         name: name.value,

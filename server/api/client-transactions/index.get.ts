@@ -1,22 +1,26 @@
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { useDatabase } from '../../database/client'
 import { clientTransactions, clients, transactionPayments } from '../../database/schema'
 
 export default defineEventHandler((event) => {
-  requireUser(event)
+  const { tenantId } = requireTenant(event)
 
   const query = getQuery(event)
   const clientId = query.clientId ? Number(query.clientId) : null
 
   const db = useDatabase()
   const rows = clientId
-    ? db.select().from(clientTransactions).where(eq(clientTransactions.clientId, clientId)).all()
-    : db.select().from(clientTransactions).all()
+    ? db
+        .select()
+        .from(clientTransactions)
+        .where(and(eq(clientTransactions.tenantId, tenantId), eq(clientTransactions.clientId, clientId)))
+        .all()
+    : db.select().from(clientTransactions).where(eq(clientTransactions.tenantId, tenantId)).all()
 
-  const clientRows = db.select().from(clients).all()
+  const clientRows = db.select().from(clients).where(eq(clients.tenantId, tenantId)).all()
   const clientMap = new Map(clientRows.map((client: any) => [client.id, client]))
 
-  const paymentRows = db.select().from(transactionPayments).all()
+  const paymentRows = db.select().from(transactionPayments).where(eq(transactionPayments.tenantId, tenantId)).all()
   const paidByTransaction = new Map<number, number>()
   for (const payment of paymentRows) {
     paidByTransaction.set(payment.transactionId, (paidByTransaction.get(payment.transactionId) || 0) + payment.amount)

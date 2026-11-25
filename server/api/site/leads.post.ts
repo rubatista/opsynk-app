@@ -3,7 +3,10 @@ import { leads } from '../../database/schema'
 
 const MAX_MESSAGE_LENGTH = 2000
 
+// Public contact form: the lead goes to the tenant whose site is being viewed.
 export default defineEventHandler(async (event) => {
+  const tenant = resolveSiteTenant(event)
+
   const body = await readBody(event)
   const name = typeof body?.name === 'string' ? body.name.trim() : ''
   const email = typeof body?.email === 'string' ? body.email.trim() : ''
@@ -21,12 +24,10 @@ export default defineEventHandler(async (event) => {
   }
 
   const db = useDatabase()
-  const [created] = db
-    .insert(leads)
-    .values({ name, email: email || null, phone: phone || null, message })
-    .returning()
-    .all()
+  db.insert(leads)
+    .values({ tenantId: tenant.id, name, email: email || null, phone: phone || null, message })
+    .run()
 
   setResponseStatus(event, 201)
-  return created
+  return { success: true }
 })

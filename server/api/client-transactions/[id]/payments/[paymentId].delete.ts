@@ -1,9 +1,9 @@
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { useDatabase } from '../../../../database/client'
 import { clientTransactions, transactionPayments } from '../../../../database/schema'
 
 export default defineEventHandler((event) => {
-  requireUser(event)
+  const { tenantId } = requireTenant(event)
 
   const transactionId = Number(getRouterParam(event, 'id'))
   const paymentId = Number(getRouterParam(event, 'paymentId'))
@@ -11,15 +11,18 @@ export default defineEventHandler((event) => {
     throw createError({ statusCode: 400, statusMessage: 'Invalid id' })
   }
 
-  const db = useDatabase()
-  const transaction = db.select().from(clientTransactions).where(eq(clientTransactions.id, transactionId)).get()
-  if (!transaction) {
-    throw createError({ statusCode: 404, statusMessage: 'Transaction not found' })
-  }
+  const transaction = requireOwned(clientTransactions, transactionId, tenantId, 'Transaction not found')
 
+  const db = useDatabase()
   const [deleted] = db
     .delete(transactionPayments)
-    .where(eq(transactionPayments.id, paymentId))
+    .where(
+      and(
+        eq(transactionPayments.id, paymentId),
+        eq(transactionPayments.transactionId, transactionId),
+        eq(transactionPayments.tenantId, tenantId)
+      )
+    )
     .returning()
     .all()
   if (!deleted) {
@@ -29,14 +32,14 @@ export default defineEventHandler((event) => {
   const remainingPayments = db
     .select()
     .from(transactionPayments)
-    .where(eq(transactionPayments.transactionId, transactionId))
+    .where(and(eq(transactionPayments.transactionId, transactionId), eq(transactionPayments.tenantId, tenantId)))
     .all()
   const paidTotal = remainingPayments.reduce((sum, p) => sum + p.amount, 0)
   const newStatus = paidTotal >= transaction.amount - 0.005 ? 'pago' : 'pendente'
   const [updatedTransaction] = db
     .update(clientTransactions)
     .set({ status: newStatus })
-    .where(eq(clientTransactions.id, transactionId))
+    .where(and(eq(clientTransactions.id, transactionId), eq(clientTransactions.tenantId, tenantId)))
     .returning()
     .all()
 

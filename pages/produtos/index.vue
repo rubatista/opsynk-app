@@ -3,7 +3,7 @@ import BaseCard from '~/components/atoms/BaseCard/BaseCard.vue'
 
 definePageMeta({ layout: 'landing' })
 
-const { data: products, pending } = await useFetch('/api/products')
+const { data: products, pending } = await useSiteFetch<any[]>('/api/site/products')
 
 const filter = ref<'todos' | 'venda' | 'aluguer'>('todos')
 const filterOptions = [

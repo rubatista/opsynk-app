@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import BackofficeSidebar from '~/components/sections/BackofficeSidebar/BackofficeSidebar.vue'
 import BackofficeTopbar from '~/components/sections/BackofficeTopbar/BackofficeTopbar.vue'
+import { useAuthStore } from '~/stores/auth'
+
+const auth = useAuthStore()
+onMounted(() => auth.refreshMe())
 </script>
 
 <template>

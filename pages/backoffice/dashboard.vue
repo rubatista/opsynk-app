@@ -2,6 +2,7 @@
 import BaseCard from '~/components/atoms/BaseCard/BaseCard.vue'
 import BaseButton from '~/components/atoms/BaseButton/BaseButton.vue'
 import VisitsChart from '~/components/sections/VisitsChart/VisitsChart.vue'
+import { useAuthStore } from '~/stores/auth'
 
 definePageMeta({ layout: 'backoffice', title: 'Dashboard' })
 
@@ -36,11 +37,13 @@ const pendingPagar = clientTransactions
   .filter((t) => t.type === 'a_pagar' && t.status === 'pendente')
   .reduce((sum, t) => sum + t.remainingAmount, 0)
 
+const auth = useAuthStore()
+
 const statCards = [
   { label: 'Produtos', value: String(products.length), icon: ICONS.produtos, href: '/backoffice/produtos' },
   { label: 'Utilizadores', value: String(users.length), icon: ICONS.utilizadores, href: '/backoffice/utilizadores' },
-  { label: 'Manutenções em 30 dias', value: String(upcomingMaintenances), icon: ICONS.manutencoes, href: '/backoffice/manutencoes' },
-  { label: 'Alugueres a terminar (30 dias)', value: String(endingRentals), icon: ICONS.alugueres, href: '/backoffice/alugueres' },
+  { label: 'Manutenções em 30 dias', value: String(upcomingMaintenances), icon: ICONS.manutencoes, href: '/backoffice/manutencoes', module: 'manutencoes' },
+  { label: 'Alugueres a terminar (30 dias)', value: String(endingRentals), icon: ICONS.alugueres, href: '/backoffice/alugueres', module: 'alugueres' },
   { label: 'Novos pedidos de contacto', value: String(newLeads), icon: ICONS.leads, href: '/backoffice/leads' },
   {
     label: 'Finanças',
@@ -49,7 +52,7 @@ const statCards = [
     icon: ICONS.finanças,
     href: '/backoffice/financeiro',
   },
-]
+].filter((card: { module?: string }) => !card.module || auth.hasModule(card.module))
 
 // Próximos prazos: manutenções + alugueres ativos, combinados e ordenados por data
 const deadlines = [

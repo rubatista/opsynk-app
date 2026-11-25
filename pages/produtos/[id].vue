@@ -5,7 +5,7 @@ import BaseButton from '~/components/atoms/BaseButton/BaseButton.vue'
 definePageMeta({ layout: 'landing' })
 
 const route = useRoute()
-const { data: product } = await useFetch(`/api/products/${route.params.id}`)
+const { data: product } = await useSiteFetch<any>(`/api/site/products/${route.params.id}`)
 
 const energyLabels: Record<string, string> = {
   eletrico: 'Elétrico',

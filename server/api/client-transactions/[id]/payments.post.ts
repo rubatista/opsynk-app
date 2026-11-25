@@ -1,9 +1,9 @@
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { useDatabase } from '../../../database/client'
 import { clientTransactions, transactionPayments } from '../../../database/schema'
 
 export default defineEventHandler(async (event) => {
-  requireUser(event)
+  const { tenantId } = requireTenant(event)
 
   const transactionId = Number(getRouterParam(event, 'id'))
   if (!Number.isFinite(transactionId)) {
@@ -19,16 +19,13 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: 'amount and date are required' })
   }
 
-  const db = useDatabase()
-  const transaction = db.select().from(clientTransactions).where(eq(clientTransactions.id, transactionId)).get()
-  if (!transaction) {
-    throw createError({ statusCode: 404, statusMessage: 'Transaction not found' })
-  }
+  const transaction = requireOwned(clientTransactions, transactionId, tenantId, 'Transaction not found')
 
+  const db = useDatabase()
   const existingPayments = db
     .select()
     .from(transactionPayments)
-    .where(eq(transactionPayments.transactionId, transactionId))
+    .where(and(eq(transactionPayments.transactionId, transactionId), eq(transactionPayments.tenantId, tenantId)))
     .all()
   const paidSoFar = existingPayments.reduce((sum, p) => sum + p.amount, 0)
   const remaining = transaction.amount - paidSoFar
@@ -39,7 +36,7 @@ export default defineEventHandler(async (event) => {
 
   const [payment] = db
     .insert(transactionPayments)
-    .values({ transactionId, amount, date, notes })
+    .values({ tenantId, transactionId, amount, date, notes })
     .returning()
     .all()
 
@@ -48,7 +45,7 @@ export default defineEventHandler(async (event) => {
   const [updatedTransaction] = db
     .update(clientTransactions)
     .set({ status: newStatus })
-    .where(eq(clientTransactions.id, transactionId))
+    .where(and(eq(clientTransactions.id, transactionId), eq(clientTransactions.tenantId, tenantId)))
     .returning()
     .all()
 

@@ -1,9 +1,9 @@
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { useDatabase } from '../../database/client'
 import { equipment } from '../../database/schema'
 
 export default defineEventHandler((event) => {
-  requireUser(event)
+  const { tenantId } = requireTenant(event)
 
   const id = Number(getRouterParam(event, 'id'))
   if (!Number.isFinite(id)) {
@@ -11,7 +11,11 @@ export default defineEventHandler((event) => {
   }
 
   const db = useDatabase()
-  const [deleted] = db.delete(equipment).where(eq(equipment.id, id)).returning().all()
+  const [deleted] = db
+    .delete(equipment)
+    .where(and(eq(equipment.id, id), eq(equipment.tenantId, tenantId)))
+    .returning()
+    .all()
 
   if (!deleted) {
     throw createError({ statusCode: 404, statusMessage: 'Equipment not found' })

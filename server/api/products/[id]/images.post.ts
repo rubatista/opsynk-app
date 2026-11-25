@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { randomUUID } from 'node:crypto'
 import { resolve } from 'node:path'
@@ -15,18 +15,14 @@ const MAX_SIZE = 5 * 1024 * 1024
 const uploadsDir = resolve(process.cwd(), 'public/uploads/products')
 
 export default defineEventHandler(async (event) => {
-  requireUser(event)
+  const { tenantId } = requireTenant(event)
 
   const id = Number(getRouterParam(event, 'id'))
   if (!Number.isFinite(id)) {
     throw createError({ statusCode: 400, statusMessage: 'Invalid product id' })
   }
 
-  const db = useDatabase()
-  const product = db.select().from(products).where(eq(products.id, id)).get()
-  if (!product) {
-    throw createError({ statusCode: 404, statusMessage: 'Product not found' })
-  }
+  requireOwned(products, id, tenantId, 'Product not found')
 
   const parts = await readMultipartFormData(event)
   const imageParts = (parts || []).filter((part) => part.type?.startsWith('image/') && part.data)
@@ -46,10 +42,11 @@ export default defineEventHandler(async (event) => {
 
   mkdirSync(uploadsDir, { recursive: true })
 
+  const db = useDatabase()
   const existingCount = db
     .select()
     .from(productImages)
-    .where(eq(productImages.productId, id))
+    .where(and(eq(productImages.productId, id), eq(productImages.tenantId, tenantId)))
     .all().length
 
   const created = imageParts.map((part, index) => {
@@ -60,7 +57,7 @@ export default defineEventHandler(async (event) => {
     const url = `/uploads/products/${filename}`
     const [row] = db
       .insert(productImages)
-      .values({ productId: id, url, position: existingCount + index })
+      .values({ tenantId, productId: id, url, position: existingCount + index })
       .returning()
       .all()
     return row
