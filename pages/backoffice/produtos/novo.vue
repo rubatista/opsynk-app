@@ -59,7 +59,7 @@ const submit = async () => {
 
 <template>
   <div class="max-w-md">
-    <h1 class="text-2xl font-bold mb-6 dark:text-white">Novo Empilhador</h1>
+    <h1 class="text-2xl font-bold mb-6">Novo Empilhador</h1>
 
     <form class="space-y-4" @submit.prevent="submit">
       <BaseInput v-model="name" label="Nome" required />
@@ -82,20 +82,20 @@ const submit = async () => {
       </div>
 
       <BaseCard>
-        <h2 class="font-semibold text-sm mb-3 dark:text-white">SEO</h2>
+        <h2 class="font-semibold text-sm mb-3">SEO</h2>
         <div class="space-y-3">
           <div>
             <BaseInput v-model="metaTitle" label="Meta Título" placeholder="Deixar em branco para usar o nome do produto" />
-            <p class="text-xs text-gray-400 mt-1">Recomendado até ~60 caracteres.</p>
+            <p class="text-xs text-subtle mt-1">Recomendado até ~60 caracteres.</p>
           </div>
           <div>
             <BaseInput v-model="metaDescription" label="Meta Descrição" multiline placeholder="Deixar em branco para usar a descrição do produto" />
-            <p class="text-xs text-gray-400 mt-1">Recomendado até ~160 caracteres.</p>
+            <p class="text-xs text-subtle mt-1">Recomendado até ~160 caracteres.</p>
           </div>
         </div>
       </BaseCard>
 
-      <p v-if="error" class="text-sm text-red-600 dark:text-red-400">{{ error }}</p>
+      <p v-if="error" class="text-sm text-danger">{{ error }}</p>
 
       <div class="flex gap-3">
         <BaseButton type="submit" variant="brand">Guardar</BaseButton>

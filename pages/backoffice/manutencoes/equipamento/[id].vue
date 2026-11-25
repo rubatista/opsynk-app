@@ -71,15 +71,15 @@ const removeMaintenance = async (maintenanceId: number) => {
 <template>
   <div class="max-w-3xl">
     <div class="flex items-center justify-between mb-2">
-      <h1 class="text-2xl font-bold dark:text-white">{{ equipment.brand }} {{ equipment.model }}</h1>
+      <h1 class="text-2xl font-bold">{{ equipment.brand }} {{ equipment.model }}</h1>
       <div class="flex gap-3">
         <BaseButton :to="`/backoffice/manutencoes/novo?equipmentId=${id}`" variant="brand">+ Nova Manutenção</BaseButton>
         <BaseButton to="/backoffice/manutencoes" variant="secondary">Voltar</BaseButton>
       </div>
     </div>
 
-    <p class="text-sm text-gray-500 dark:text-zinc-400 mb-6">
-      <NuxtLink v-if="equipment.client" :to="`/backoffice/clientes/${equipment.client.id}`" class="text-brand-500 hover:underline">
+    <p class="text-sm text-muted mb-6">
+      <NuxtLink v-if="equipment.client" :to="`/backoffice/clientes/${equipment.client.id}`" class="text-primary-text hover:underline">
         {{ equipment.client.name }}
       </NuxtLink>
       <span v-else-if="equipment.ownerName">{{ equipment.ownerName }}</span>
@@ -89,10 +89,10 @@ const removeMaintenance = async (maintenanceId: number) => {
 
     <BaseCard class="mb-6">
       <div class="flex items-center justify-between mb-1">
-        <p class="text-xs text-gray-500 dark:text-zinc-400">Próxima manutenção</p>
+        <p class="text-xs text-muted">Próxima manutenção</p>
         <button
           v-if="nextMaintenance && !editingNext"
-          class="text-xs text-brand-500 hover:underline"
+          class="text-xs text-primary-text hover:underline"
           @click="startEditNext"
         >
           Editar
@@ -103,7 +103,7 @@ const removeMaintenance = async (maintenanceId: number) => {
         <div class="space-y-3 mt-2">
           <BaseInput v-model="nextDate" label="Data" type="date" />
           <BaseInput v-model="nextNotes" label="O que é preciso fazer" multiline />
-          <p v-if="nextError" class="text-sm text-red-600 dark:text-red-400">{{ nextError }}</p>
+          <p v-if="nextError" class="text-sm text-danger">{{ nextError }}</p>
           <div class="flex gap-3">
             <BaseButton variant="brand" @click="saveNext">Guardar</BaseButton>
             <BaseButton variant="secondary" @click="editingNext = false">Cancelar</BaseButton>
@@ -113,12 +113,12 @@ const removeMaintenance = async (maintenanceId: number) => {
       <template v-else-if="nextMaintenance">
         <p
           class="text-xl font-bold"
-          :class="isOverdue(nextMaintenance.nextDueDate) ? 'text-red-600 dark:text-red-400' : 'text-brand-500'"
+          :class="isOverdue(nextMaintenance.nextDueDate) ? 'text-danger' : 'text-primary-text'"
         >
           {{ nextMaintenance.nextDueDate }}
           <span v-if="isOverdue(nextMaintenance.nextDueDate)" class="text-sm font-semibold">(em atraso)</span>
         </p>
-        <p v-if="nextMaintenance.nextDueNotes" class="text-sm text-gray-600 dark:text-zinc-300 mt-1">
+        <p v-if="nextMaintenance.nextDueNotes" class="text-sm text-ink-soft mt-1">
           {{ nextMaintenance.nextDueNotes }}
         </p>
         <NuxtLink
@@ -134,19 +134,19 @@ const removeMaintenance = async (maintenanceId: number) => {
               date: nextMaintenance.nextDueDate,
             },
           }"
-          class="inline-block text-xs text-brand-500 hover:underline mt-2"
+          class="inline-block text-xs text-primary-text hover:underline mt-2"
         >
           Emitir Orçamento
         </NuxtLink>
       </template>
-      <p v-else class="text-sm text-gray-500 dark:text-zinc-400">
+      <p v-else class="text-sm text-muted">
         Sem próxima manutenção agendada. Define a data e o que é preciso fazer ao registar ou editar uma manutenção.
       </p>
     </BaseCard>
 
-    <h2 class="text-lg font-bold mb-3 dark:text-white">Histórico</h2>
+    <h2 class="text-lg font-bold mb-3">Histórico</h2>
 
-    <p v-if="!history.length" class="text-sm text-gray-500 dark:text-zinc-400">
+    <p v-if="!history.length" class="text-sm text-muted">
       Ainda não há manutenções registadas para este equipamento.
     </p>
 
@@ -154,10 +154,10 @@ const removeMaintenance = async (maintenanceId: number) => {
       <li
         v-for="m in history"
         :key="m.id"
-        class="border border-gray-200 dark:border-zinc-800 rounded-lg p-3 text-sm"
+        class="border border-line rounded-lg p-3 text-sm"
       >
         <div class="flex items-center justify-between">
-          <span class="font-semibold dark:text-white">{{ m.performedAt }}</span>
+          <span class="font-semibold">{{ m.performedAt }}</span>
           <div class="space-x-3">
             <NuxtLink
               :to="{
@@ -172,18 +172,18 @@ const removeMaintenance = async (maintenanceId: number) => {
                   date: m.performedAt,
                 },
               }"
-              class="text-xs text-brand-500 hover:underline"
+              class="text-xs text-primary-text hover:underline"
             >
               Emitir Fatura
             </NuxtLink>
-            <NuxtLink :to="`/backoffice/manutencoes/${m.id}`" class="text-xs text-brand-500 hover:underline">Editar</NuxtLink>
-            <button class="text-xs text-red-600 hover:underline" @click="removeMaintenance(m.id)">Apagar</button>
+            <NuxtLink :to="`/backoffice/manutencoes/${m.id}`" class="text-xs text-primary-text hover:underline">Editar</NuxtLink>
+            <button class="text-xs text-danger hover:underline" @click="removeMaintenance(m.id)">Apagar</button>
           </div>
         </div>
-        <p class="text-gray-600 dark:text-zinc-300 mt-1">{{ m.description }}</p>
-        <div v-if="m.nextDueDate" class="mt-2 text-xs" :class="isOverdue(m.nextDueDate) ? 'text-red-600 dark:text-red-400 font-semibold' : 'text-gray-400'">
+        <p class="text-ink-soft mt-1">{{ m.description }}</p>
+        <div v-if="m.nextDueDate" class="mt-2 text-xs" :class="isOverdue(m.nextDueDate) ? 'text-danger font-semibold' : 'text-subtle'">
           Próxima manutenção: {{ m.nextDueDate }}
-          <span v-if="m.nextDueNotes" class="block text-gray-500 dark:text-zinc-400 font-normal mt-0.5">{{ m.nextDueNotes }}</span>
+          <span v-if="m.nextDueNotes" class="block text-muted font-normal mt-0.5">{{ m.nextDueNotes }}</span>
         </div>
       </li>
     </ul>

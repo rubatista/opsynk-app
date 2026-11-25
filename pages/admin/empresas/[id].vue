@@ -115,14 +115,14 @@ const addUser = async () => {
 
 <template>
   <div class="max-w-3xl">
-    <NuxtLink to="/admin" class="text-sm text-gray-500 dark:text-zinc-400 hover:text-brand-500">← Empresas</NuxtLink>
+    <NuxtLink to="/admin" class="text-sm text-muted hover:text-primary-text">← Empresas</NuxtLink>
     <div class="flex flex-wrap items-center justify-between gap-3 mt-2 mb-6">
-      <h1 class="text-2xl font-bold dark:text-white">{{ tenant.name }}</h1>
+      <h1 class="text-2xl font-bold">{{ tenant.name }}</h1>
       <a
         :href="siteUrl(tenant.slug)"
         target="_blank"
         rel="noopener"
-        class="text-sm text-brand-500 hover:underline break-all"
+        class="text-sm text-primary-text hover:underline break-all"
       >
         Abrir site ↗
       </a>
@@ -130,12 +130,12 @@ const addUser = async () => {
 
     <form class="space-y-6" @submit.prevent="save">
       <BaseCard>
-        <h2 class="font-semibold text-sm mb-3 dark:text-white">Empresa</h2>
+        <h2 class="font-semibold text-sm mb-3">Empresa</h2>
         <div class="space-y-3">
           <BaseInput v-model="name" label="Nome" required />
           <div>
             <BaseInput v-model="slug" label="Endereço do site" required />
-            <p class="text-xs text-gray-400 mt-1 break-all">
+            <p class="text-xs text-subtle mt-1 break-all">
               {{ siteUrl(slug || 'empresa') }} — alterar o endereço muda o link do site do cliente.
             </p>
           </div>
@@ -144,75 +144,75 @@ const addUser = async () => {
       </BaseCard>
 
       <BaseCard>
-        <h2 class="font-semibold text-sm mb-1 dark:text-white">Estado</h2>
-        <p class="text-xs text-gray-400 mb-3">
+        <h2 class="font-semibold text-sm mb-1">Estado</h2>
+        <p class="text-xs text-subtle mb-3">
           Uma empresa suspensa não consegue entrar no backoffice e o site público fica offline. Os dados mantêm-se.
         </p>
         <div class="flex flex-wrap gap-2">
           <label
             v-for="option in TENANT_STATUSES"
             :key="option.value"
-            class="flex items-center gap-2 px-3 py-2 rounded-xl border text-sm cursor-pointer dark:text-zinc-200"
+            class="flex items-center gap-2 px-3 py-2 rounded-xl border text-sm cursor-pointer"
             :class="
               status === option.value
                 ? option.value === 'ativo'
-                  ? 'border-green-500 bg-green-50 dark:bg-green-500/10'
-                  : 'border-red-500 bg-red-50 dark:bg-red-500/10'
-                : 'border-gray-200 dark:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800'
+                  ? 'border-success bg-success-soft'
+                  : 'border-danger bg-danger-soft'
+                : 'border-line hover:bg-surface-muted'
             "
           >
-            <input v-model="status" type="radio" name="status" :value="option.value" class="accent-brand-500" />
+            <input v-model="status" type="radio" name="status" :value="option.value" class="accent-primary" />
             {{ option.label }}
           </label>
         </div>
       </BaseCard>
 
       <BaseCard>
-        <h2 class="font-semibold text-sm mb-1 dark:text-white">Tipo de negócio</h2>
-        <p class="text-xs text-gray-400 mb-3">Define o que a empresa vê no feed entre comerciantes.</p>
+        <h2 class="font-semibold text-sm mb-1">Tipo de negócio</h2>
+        <p class="text-xs text-subtle mb-3">Define o que a empresa vê no feed entre comerciantes.</p>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <label
             v-for="tag in BUSINESS_TAGS"
             :key="tag.value"
-            class="flex items-center gap-2 px-3 py-2 rounded-xl border border-gray-200 dark:border-zinc-700 text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-zinc-800 dark:text-zinc-200"
+            class="flex items-center gap-2 px-3 py-2 rounded-xl border border-line text-sm cursor-pointer hover:bg-surface-muted"
           >
-            <input v-model="tags" type="checkbox" :value="tag.value" class="accent-brand-500" />
+            <input v-model="tags" type="checkbox" :value="tag.value" class="accent-primary" />
             {{ tag.label }}
           </label>
         </div>
       </BaseCard>
 
       <BaseCard>
-        <h2 class="font-semibold text-sm mb-1 dark:text-white">Módulos</h2>
-        <p class="text-xs text-gray-400 mb-3">
+        <h2 class="font-semibold text-sm mb-1">Módulos</h2>
+        <p class="text-xs text-subtle mb-3">
           Secções extra do backoffice. Produtos, clientes, finanças, faturas e contactos estão sempre ativos.
         </p>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <label
             v-for="mod in TENANT_MODULES"
             :key="mod.value"
-            class="flex items-center gap-2 px-3 py-2 rounded-xl border border-gray-200 dark:border-zinc-700 text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-zinc-800 dark:text-zinc-200"
+            class="flex items-center gap-2 px-3 py-2 rounded-xl border border-line text-sm cursor-pointer hover:bg-surface-muted"
           >
-            <input v-model="modules" type="checkbox" :value="mod.value" class="accent-brand-500" />
+            <input v-model="modules" type="checkbox" :value="mod.value" class="accent-primary" />
             {{ mod.label }}
           </label>
         </div>
       </BaseCard>
 
-      <p v-if="saveError" class="text-sm text-red-600 dark:text-red-400">{{ saveError }}</p>
-      <p v-if="saved" class="text-sm text-green-600 dark:text-green-400">Alterações guardadas.</p>
+      <p v-if="saveError" class="text-sm text-danger">{{ saveError }}</p>
+      <p v-if="saved" class="text-sm text-success">Alterações guardadas.</p>
 
       <BaseButton type="submit" variant="brand" :disabled="saving">{{ saving ? 'A guardar...' : 'Guardar alterações' }}</BaseButton>
     </form>
 
     <section class="mt-10">
-      <h2 class="text-lg font-bold mb-3 dark:text-white">Utilizadores</h2>
+      <h2 class="text-lg font-bold mb-3">Utilizadores</h2>
 
-      <p v-if="!tenantUsers.length" class="text-sm text-gray-500 dark:text-zinc-400 mb-4">Esta empresa ainda não tem utilizadores.</p>
+      <p v-if="!tenantUsers.length" class="text-sm text-muted mb-4">Esta empresa ainda não tem utilizadores.</p>
 
       <div v-else class="overflow-x-auto mb-6">
-        <table class="w-full bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl overflow-hidden text-sm">
-          <thead class="bg-gray-50 dark:bg-zinc-800 text-left text-gray-500 dark:text-zinc-400">
+        <table class="w-full bg-surface border border-line rounded-xl overflow-hidden text-sm">
+          <thead class="bg-surface-muted text-left text-muted">
             <tr>
               <th class="px-4 py-3">Nome</th>
               <th class="px-4 py-3">Email</th>
@@ -222,23 +222,23 @@ const addUser = async () => {
           </thead>
           <tbody>
             <template v-for="user in tenantUsers" :key="user.id">
-              <tr class="border-t border-gray-100 dark:border-zinc-800 text-gray-900 dark:text-zinc-100">
+              <tr class="border-t border-line text-ink">
                 <td class="px-4 py-3">{{ user.name || '—' }}</td>
                 <td class="px-4 py-3 break-all">{{ user.email }}</td>
                 <td class="px-4 py-3 whitespace-nowrap">{{ formatDate(user.createdAt) }}</td>
                 <td class="px-4 py-3 text-right whitespace-nowrap">
-                  <span v-if="resetDoneFor === user.id" class="text-green-600 dark:text-green-400 mr-3">Password reposta</span>
-                  <button class="text-brand-500 hover:underline" @click="startReset(user.id)">Repor password</button>
+                  <span v-if="resetDoneFor === user.id" class="text-success mr-3">Password reposta</span>
+                  <button class="text-primary-text hover:underline" @click="startReset(user.id)">Repor password</button>
                 </td>
               </tr>
-              <tr v-if="resetUserId === user.id" class="border-t border-gray-100 dark:border-zinc-800">
+              <tr v-if="resetUserId === user.id" class="border-t border-line">
                 <td colspan="4" class="px-4 py-3">
                   <form class="flex flex-wrap items-end gap-3" @submit.prevent="submitReset">
                     <BaseInput v-model="resetPassword" label="Nova password (mín. 8 caracteres)" type="password" required class="flex-1 min-w-[12rem]" />
                     <BaseButton type="submit" variant="brand">Guardar</BaseButton>
                     <BaseButton variant="secondary" @click="resetUserId = null">Cancelar</BaseButton>
                   </form>
-                  <p v-if="resetError" class="text-sm text-red-600 dark:text-red-400 mt-2">{{ resetError }}</p>
+                  <p v-if="resetError" class="text-sm text-danger mt-2">{{ resetError }}</p>
                 </td>
               </tr>
             </template>
@@ -247,14 +247,14 @@ const addUser = async () => {
       </div>
 
       <BaseCard>
-        <h3 class="font-semibold text-sm mb-3 dark:text-white">Adicionar utilizador</h3>
+        <h3 class="font-semibold text-sm mb-3">Adicionar utilizador</h3>
         <form class="space-y-3" @submit.prevent="addUser">
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <BaseInput v-model="newUserName" label="Nome" />
             <BaseInput v-model="newUserEmail" label="Email" type="email" required />
             <BaseInput v-model="newUserPassword" label="Password" type="password" required />
           </div>
-          <p v-if="newUserError" class="text-sm text-red-600 dark:text-red-400">{{ newUserError }}</p>
+          <p v-if="newUserError" class="text-sm text-danger">{{ newUserError }}</p>
           <BaseButton type="submit" variant="brand">Adicionar</BaseButton>
         </form>
       </BaseCard>

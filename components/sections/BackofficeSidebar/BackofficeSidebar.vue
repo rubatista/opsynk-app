@@ -1,134 +1,135 @@
 <script setup lang="ts">
 import { useAuthStore } from '~/stores/auth'
+import { BACKOFFICE_ICONS as ICONS } from '~/utils/backofficeIcons'
 
 const auth = useAuthStore()
 
 // `module`: only shown when that optional module is enabled for the company (set in /admin).
 const menuLinks: { to: string; label: string; icon: string; module?: string }[] = [
-  {
-    to: '/backoffice/dashboard',
-    label: 'Dashboard',
-    icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6',
-  },
-  {
-    to: '/backoffice/produtos',
-    label: 'Produtos',
-    icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4',
-  },
-  {
-    to: '/backoffice/alugueres',
-    label: 'Alugueres',
-    module: 'alugueres',
-    icon: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z',
-  },
-  {
-    to: '/backoffice/clientes',
-    label: 'Clientes',
-    icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z',
-  },
-  {
-    to: '/backoffice/financeiro',
-    label: 'Finanças',
-    icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V6m0 2v8m0 0v2m0-2c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
-  },
-  {
-    to: '/backoffice/documentos',
-    label: 'Faturas e Orçamentos',
-    icon: 'M9 12h6m-6 4h3m-7 4h10a2 2 0 002-2V7.414a1 1 0 00-.293-.707l-3.414-3.414A1 1 0 0012.586 3H6a2 2 0 00-2 2v14a2 2 0 002 2z',
-  },
-  {
-    to: '/backoffice/equipamentos',
-    label: 'Equipamentos',
-    module: 'equipamentos',
-    icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z',
-  },
-  {
-    to: '/backoffice/manutencoes',
-    label: 'Manutenções',
-    module: 'manutencoes',
-    icon: 'M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z',
-  },
+  { to: '/backoffice/dashboard', label: 'Dashboard', icon: ICONS.dashboard },
+  { to: '/backoffice/produtos', label: 'Produtos', icon: ICONS.produtos },
+  { to: '/backoffice/alugueres', label: 'Alugueres', module: 'alugueres', icon: ICONS.alugueres },
+  { to: '/backoffice/clientes', label: 'Clientes', icon: ICONS.clientes },
+  { to: '/backoffice/financeiro', label: 'Finanças', icon: ICONS.financas },
+  { to: '/backoffice/documentos', label: 'Faturas e Orçamentos', icon: ICONS.documentos },
+  { to: '/backoffice/equipamentos', label: 'Equipamentos', module: 'equipamentos', icon: ICONS.equipamentos },
+  { to: '/backoffice/manutencoes', label: 'Manutenções', module: 'manutencoes', icon: ICONS.manutencoes },
+  { to: '/backoffice/leads', label: 'Pedidos de Contacto', icon: ICONS.leads },
 ]
 
 const generalLinks = [
-  {
-    to: '/backoffice/utilizadores',
-    label: 'Utilizadores',
-    icon: 'M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-1.13a4 4 0 10-4-4 4 4 0 004 4zm6 0a4 4 0 10-3-6.65',
-  },
-  {
-    to: '/backoffice/definicoes',
-    label: 'Definições',
-    icon: 'M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z',
-  },
+  { to: '/backoffice/utilizadores', label: 'Utilizadores', icon: ICONS.utilizadores },
+  { to: '/backoffice/definicoes', label: 'Definições', icon: ICONS.definicoes },
 ]
 
 const visibleMenuLinks = computed(() => menuLinks.filter((link) => !link.module || auth.hasModule(link.module)))
 
 const sidebarOpen = useState('backofficeSidebarOpen', () => false)
 const close = () => (sidebarOpen.value = false)
+
+const displayName = computed(() => auth.user?.name || auth.user?.email || 'Utilizador')
+const initials = computed(() =>
+  displayName.value
+    .split(' ')
+    .map((part: string) => part[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase()
+)
+
+const handleLogout = () => {
+  auth.logout()
+  navigateTo('/login')
+}
+
+const linkClass =
+  'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted hover:bg-surface-muted hover:text-ink transition'
+const activeClass = '!bg-primary-soft !text-primary-text font-semibold'
 </script>
 
 <template>
-  <div
-    v-if="sidebarOpen"
-    class="fixed inset-0 z-30 bg-black/50 md:hidden"
-    @click="close"
-  />
+  <div v-if="sidebarOpen" class="fixed inset-0 z-40 bg-black/40 backdrop-blur-[1px] md:hidden" @click="close" />
 
   <aside
-    class="w-64 shrink-0 bg-white dark:bg-zinc-900 text-gray-900 dark:text-white min-h-screen flex flex-col fixed inset-y-0 left-0 z-40 rounded-r-3xl border-r border-gray-100 dark:border-zinc-800 shadow-sm transform transition-transform duration-200 md:static md:translate-x-0 md:min-h-0 md:rounded-3xl md:border-0"
+    class="w-64 shrink-0 bg-surface flex flex-col fixed inset-y-0 left-0 z-50 border-r border-line shadow-card transform transition-transform duration-200 md:sticky md:top-4 md:h-[calc(100vh-2rem)] md:translate-x-0 md:rounded-3xl md:border"
     :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
   >
-    <div class="flex items-center gap-2 px-6 py-5 border-b border-gray-100 dark:border-zinc-800">
-      <span class="w-8 h-8 rounded-xl bg-brand-500 text-white flex items-center justify-center shrink-0">
-        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+    <div class="flex items-center gap-3 px-5 pt-6 pb-5">
+      <span
+        class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#9a8cff] to-primary text-white flex items-center justify-center shrink-0 shadow-md shadow-primary/30"
+      >
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" :d="ICONS.produtos" />
         </svg>
       </span>
-      <span class="font-black tracking-tight leading-tight">
-        OPSYNK<br />
-        <span class="text-brand-500 font-semibold text-xs tracking-normal">{{ auth.tenant?.name }}</span>
-      </span>
+      <div class="min-w-0">
+        <p class="font-extrabold text-lg tracking-tight leading-tight text-ink">Opsynk</p>
+        <p class="text-xs font-semibold text-primary-text truncate">{{ auth.tenant?.name }}</p>
+      </div>
     </div>
-    <nav class="flex-1 px-3 py-4 space-y-6 overflow-y-auto">
-      <div>
-        <p class="px-3 mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-zinc-500">Menu</p>
-        <div class="space-y-1">
-          <NuxtLink
-            v-for="link in visibleMenuLinks"
-            :key="link.to"
-            :to="link.to"
-            class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-gray-500 dark:text-zinc-400 hover:bg-gray-100 dark:hover:bg-zinc-800 hover:text-gray-900 dark:hover:text-white transition"
-            active-class="!bg-brand-500 !text-white font-semibold"
-            @click="close"
-          >
-            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" :d="link.icon" />
-            </svg>
-            {{ link.label }}
-          </NuxtLink>
-        </div>
+
+    <nav class="flex-1 px-3 pb-4 overflow-y-auto" aria-label="Menu do backoffice">
+      <div class="space-y-1">
+        <NuxtLink
+          v-for="link in visibleMenuLinks"
+          :key="link.to"
+          :to="link.to"
+          :class="linkClass"
+          :active-class="activeClass"
+          @click="close"
+        >
+          <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round" :d="link.icon" />
+          </svg>
+          <span class="truncate">{{ link.label }}</span>
+        </NuxtLink>
       </div>
 
-      <div>
-        <p class="px-3 mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-zinc-500">Geral</p>
-        <div class="space-y-1">
-          <NuxtLink
-            v-for="link in generalLinks"
-            :key="link.to"
-            :to="link.to"
-            class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-gray-500 dark:text-zinc-400 hover:bg-gray-100 dark:hover:bg-zinc-800 hover:text-gray-900 dark:hover:text-white transition"
-            active-class="!bg-brand-500 !text-white font-semibold"
-            @click="close"
-          >
-            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" :d="link.icon" />
-            </svg>
-            {{ link.label }}
-          </NuxtLink>
-        </div>
+      <div class="my-4 mx-3 border-t border-line" />
+
+      <div class="space-y-1">
+        <NuxtLink
+          v-for="link in generalLinks"
+          :key="link.to"
+          :to="link.to"
+          :class="linkClass"
+          :active-class="activeClass"
+          @click="close"
+        >
+          <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round" :d="link.icon" />
+          </svg>
+          <span class="truncate">{{ link.label }}</span>
+        </NuxtLink>
       </div>
     </nav>
+
+    <div class="m-3 p-3 rounded-2xl bg-surface-muted border border-line flex items-center gap-3">
+      <NuxtLink
+        :to="auth.user ? `/backoffice/utilizadores/${auth.user.id}` : '/backoffice/utilizadores'"
+        class="flex items-center gap-3 min-w-0 flex-1 group"
+        @click="close"
+      >
+        <span
+          class="w-9 h-9 rounded-full bg-gradient-to-br from-[#9a8cff] to-primary text-white text-xs font-bold flex items-center justify-center shrink-0"
+        >
+          {{ initials }}
+        </span>
+        <span class="min-w-0">
+          <span class="block text-sm font-semibold text-ink truncate">{{ displayName }}</span>
+          <span class="block text-xs text-muted group-hover:text-primary-text transition">Ver perfil</span>
+        </span>
+      </NuxtLink>
+      <button
+        class="w-8 h-8 rounded-lg flex items-center justify-center text-subtle hover:text-danger hover:bg-danger-soft transition shrink-0"
+        aria-label="Terminar sessão"
+        title="Terminar sessão"
+        @click="handleLogout"
+      >
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" :d="ICONS.logout" />
+        </svg>
+      </button>
+    </div>
   </aside>
 </template>

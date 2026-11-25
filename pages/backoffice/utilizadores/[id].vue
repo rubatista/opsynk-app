@@ -30,14 +30,14 @@ const submit = async () => {
 
 <template>
   <div class="max-w-md">
-    <h1 class="text-2xl font-bold mb-6 dark:text-white">Editar Utilizador</h1>
+    <h1 class="text-2xl font-bold mb-6">Editar Utilizador</h1>
 
-    <form class="space-y-4" @submit.prevent="submit">
+    <form class="space-y-4 bg-surface border border-line rounded-2xl p-5 sm:p-6 shadow-card" @submit.prevent="submit">
       <BaseInput v-model="name" label="Nome" />
       <BaseInput v-model="email" label="Email" type="email" required />
       <BaseInput v-model="password" label="Nova Password" type="password" placeholder="Deixar em branco para manter" />
 
-      <p v-if="error" class="text-sm text-red-600 dark:text-red-400">{{ error }}</p>
+      <p v-if="error" class="text-sm text-danger">{{ error }}</p>
 
       <div class="flex gap-3">
         <BaseButton type="submit" variant="brand">Guardar</BaseButton>

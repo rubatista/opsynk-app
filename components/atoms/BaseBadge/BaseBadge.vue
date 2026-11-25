@@ -1,20 +1,25 @@
 <script setup lang="ts">
 withDefaults(
   defineProps<{
-    variant?: 'venda' | 'aluguer' | 'neutral'
+    variant?: 'venda' | 'aluguer' | 'neutral' | 'primary' | 'success' | 'warning' | 'danger' | 'info'
   }>(),
   { variant: 'neutral' }
 )
 
 const variants = {
-  venda: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300',
-  aluguer: 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300',
-  neutral: 'bg-gray-100 text-gray-700 dark:bg-zinc-800 dark:text-zinc-300',
+  venda: 'bg-primary-soft text-primary-text',
+  aluguer: 'bg-warning-soft text-warning',
+  neutral: 'bg-surface-muted text-muted',
+  primary: 'bg-primary-soft text-primary-text',
+  success: 'bg-success-soft text-success',
+  warning: 'bg-warning-soft text-warning',
+  danger: 'bg-danger-soft text-danger',
+  info: 'bg-info-soft text-info',
 }
 </script>
 
 <template>
-  <span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold" :class="variants[variant]">
+  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold" :class="variants[variant]">
     <slot />
   </span>
 </template>

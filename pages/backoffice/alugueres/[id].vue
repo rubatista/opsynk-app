@@ -58,10 +58,10 @@ const submit = async () => {
 
 <template>
   <div class="max-w-md">
-    <h1 class="text-2xl font-bold mb-1 dark:text-white">Editar Aluguer</h1>
-    <p class="text-sm text-gray-500 dark:text-zinc-400 mb-6">{{ product.name }}</p>
+    <h1 class="text-2xl font-bold mb-1">Editar Aluguer</h1>
+    <p class="text-sm text-muted mb-6">{{ product.name }}</p>
 
-    <form class="space-y-4" @submit.prevent="submit">
+    <form class="space-y-4 bg-surface border border-line rounded-2xl p-5 sm:p-6 shadow-card" @submit.prevent="submit">
       <BaseSelect v-model="status" label="Estado" :options="statusOptions" />
 
       <BaseSelect v-model="clientId" label="Cliente registado (opcional)" :options="clientOptions" />
@@ -76,7 +76,7 @@ const submit = async () => {
       </div>
       <BaseInput v-model="notes" label="Notas" multiline />
 
-      <p v-if="error" class="text-sm text-red-600 dark:text-red-400">{{ error }}</p>
+      <p v-if="error" class="text-sm text-danger">{{ error }}</p>
 
       <div class="flex gap-3">
         <BaseButton type="submit" variant="brand">Guardar</BaseButton>

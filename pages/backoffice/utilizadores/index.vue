@@ -19,15 +19,15 @@ const removeUser = async (id: number) => {
 <template>
   <div>
     <div class="flex items-center justify-between mb-6">
-      <h1 class="text-2xl font-bold dark:text-white">Utilizadores</h1>
+      <h1 class="text-2xl font-bold">Utilizadores</h1>
       <BaseButton to="/backoffice/utilizadores/novo" variant="brand">+ Novo Utilizador</BaseButton>
     </div>
 
-    <p v-if="!users?.length" class="text-gray-500 dark:text-zinc-400">Ainda não há utilizadores.</p>
+    <p v-if="!users?.length" class="text-muted">Ainda não há utilizadores.</p>
 
     <div v-else class="overflow-x-auto">
-      <table class="w-full bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl overflow-hidden text-sm">
-        <thead class="bg-gray-50 dark:bg-zinc-800 text-left text-gray-500 dark:text-zinc-400">
+      <table class="w-full bg-surface border border-line rounded-xl overflow-hidden text-sm">
+        <thead class="bg-surface-muted text-left text-muted">
           <tr>
             <th class="px-4 py-3">Nome</th>
             <th class="px-4 py-3">Email</th>
@@ -35,14 +35,14 @@ const removeUser = async (id: number) => {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="user in users" :key="user.id" class="border-t border-gray-100 dark:border-zinc-800 text-gray-900 dark:text-zinc-100">
+          <tr v-for="user in users" :key="user.id" class="border-t border-line text-ink">
             <td class="px-4 py-3">{{ user.name || '—' }}</td>
             <td class="px-4 py-3">{{ user.email }}</td>
             <td class="px-4 py-3 text-right space-x-3">
-              <NuxtLink :to="`/backoffice/utilizadores/${user.id}`" class="text-brand-500 hover:underline">
+              <NuxtLink :to="`/backoffice/utilizadores/${user.id}`" class="text-primary-text hover:underline">
                 Editar
               </NuxtLink>
-              <button class="text-red-600 hover:underline" @click="removeUser(user.id)">
+              <button class="text-danger hover:underline" @click="removeUser(user.id)">
                 Apagar
               </button>
             </td>

@@ -40,25 +40,25 @@ const submit = async () => {
 
 <template>
   <div class="max-w-md">
-    <h1 class="text-2xl font-bold mb-1 dark:text-white">Editar Manutenção</h1>
-    <p class="text-sm text-gray-500 dark:text-zinc-400 mb-6">
+    <h1 class="text-2xl font-bold mb-1">Editar Manutenção</h1>
+    <p class="text-sm text-muted mb-6">
       {{ equipment.brand }} {{ equipment.model }}
       <span v-if="equipment.ownerName"> — {{ equipment.ownerName }}</span>
     </p>
 
-    <form class="space-y-4" @submit.prevent="submit">
+    <form class="space-y-4 bg-surface border border-line rounded-2xl p-5 sm:p-6 shadow-card" @submit.prevent="submit">
       <BaseInput v-model="performedAt" label="Feita em" type="date" required />
       <BaseInput v-model="description" label="O que foi feito" multiline required />
 
-      <div class="pt-2 border-t border-gray-100 dark:border-zinc-800">
-        <p class="text-sm font-semibold mt-3 mb-3 dark:text-white">Próxima manutenção</p>
+      <div class="pt-2 border-t border-line">
+        <p class="text-sm font-semibold mt-3 mb-3">Próxima manutenção</p>
         <BaseInput v-model="nextDueDate" label="Data" type="date" />
         <div class="mt-3">
           <BaseInput v-model="nextDueNotes" label="O que é preciso fazer" multiline />
         </div>
       </div>
 
-      <p v-if="error" class="text-sm text-red-600 dark:text-red-400">{{ error }}</p>
+      <p v-if="error" class="text-sm text-danger">{{ error }}</p>
 
       <div class="flex gap-3">
         <BaseButton type="submit" variant="brand">Guardar</BaseButton>

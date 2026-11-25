@@ -85,58 +85,58 @@ const submit = async () => {
 
 <template>
   <div class="max-w-2xl">
-    <NuxtLink to="/admin" class="text-sm text-gray-500 dark:text-zinc-400 hover:text-brand-500">← Empresas</NuxtLink>
-    <h1 class="text-2xl font-bold mt-2 mb-6 dark:text-white">Nova empresa</h1>
+    <NuxtLink to="/admin" class="text-sm text-muted hover:text-primary-text">← Empresas</NuxtLink>
+    <h1 class="text-2xl font-bold mt-2 mb-6">Nova empresa</h1>
 
     <form class="space-y-6" @submit.prevent="submit">
       <BaseCard>
-        <h2 class="font-semibold text-sm mb-3 dark:text-white">Empresa</h2>
+        <h2 class="font-semibold text-sm mb-3">Empresa</h2>
         <div class="space-y-3">
           <BaseInput v-model="name" label="Nome" placeholder="Ex.: Stand Silva Automóveis" required />
           <div>
             <BaseInput v-model="slugModel" label="Endereço do site" placeholder="stand-silva" required />
-            <p class="text-xs text-gray-400 mt-1 break-all">
-              Site público: <span class="text-gray-600 dark:text-zinc-300">{{ siteUrl(slug || 'empresa') }}</span>
+            <p class="text-xs text-subtle mt-1 break-all">
+              Site público: <span class="text-ink-soft">{{ siteUrl(slug || 'empresa') }}</span>
             </p>
           </div>
           <div>
             <BaseInput v-model="domain" label="Domínio próprio (opcional)" placeholder="www.standsilva.pt" />
-            <p class="text-xs text-gray-400 mt-1">Se o cliente tiver domínio, aponta-o (DNS) para a plataforma.</p>
+            <p class="text-xs text-subtle mt-1">Se o cliente tiver domínio, aponta-o (DNS) para a plataforma.</p>
           </div>
         </div>
       </BaseCard>
 
       <BaseCard>
-        <h2 class="font-semibold text-sm mb-1 dark:text-white">Tipo de negócio</h2>
-        <p class="text-xs text-gray-400 mb-3">Define o que a empresa vê no feed entre comerciantes.</p>
+        <h2 class="font-semibold text-sm mb-1">Tipo de negócio</h2>
+        <p class="text-xs text-subtle mb-3">Define o que a empresa vê no feed entre comerciantes.</p>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <label
             v-for="tag in BUSINESS_TAGS"
             :key="tag.value"
-            class="flex items-center gap-2 px-3 py-2 rounded-xl border border-gray-200 dark:border-zinc-700 text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-zinc-800 dark:text-zinc-200"
+            class="flex items-center gap-2 px-3 py-2 rounded-xl border border-line text-sm cursor-pointer hover:bg-surface-muted"
           >
-            <input v-model="tags" type="checkbox" :value="tag.value" class="accent-brand-500" />
+            <input v-model="tags" type="checkbox" :value="tag.value" class="accent-primary" />
             {{ tag.label }}
           </label>
         </div>
       </BaseCard>
 
       <BaseCard>
-        <h2 class="font-semibold text-sm mb-1 dark:text-white">Módulos</h2>
-        <p class="text-xs text-gray-400 mb-3">
+        <h2 class="font-semibold text-sm mb-1">Módulos</h2>
+        <p class="text-xs text-subtle mb-3">
           Secções extra do backoffice. Produtos, clientes, finanças, faturas e contactos estão sempre ativos.
         </p>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <label
             v-for="mod in TENANT_MODULES"
             :key="mod.value"
-            class="flex items-center gap-2 px-3 py-2 rounded-xl border border-gray-200 dark:border-zinc-700 text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-zinc-800 dark:text-zinc-200"
+            class="flex items-center gap-2 px-3 py-2 rounded-xl border border-line text-sm cursor-pointer hover:bg-surface-muted"
           >
             <input
               v-model="modules"
               type="checkbox"
               :value="mod.value"
-              class="accent-brand-500"
+              class="accent-primary"
               @change="modulesTouched = true"
             />
             {{ mod.label }}
@@ -145,19 +145,19 @@ const submit = async () => {
       </BaseCard>
 
       <BaseCard>
-        <h2 class="font-semibold text-sm mb-1 dark:text-white">Primeiro utilizador</h2>
-        <p class="text-xs text-gray-400 mb-3">A conta que o cliente usa para entrar no backoffice.</p>
+        <h2 class="font-semibold text-sm mb-1">Primeiro utilizador</h2>
+        <p class="text-xs text-subtle mb-3">A conta que o cliente usa para entrar no backoffice.</p>
         <div class="space-y-3">
           <BaseInput v-model="userName" label="Nome" />
           <BaseInput v-model="userEmail" label="Email" type="email" required />
           <div>
             <BaseInput v-model="userPassword" label="Password" type="password" required />
-            <p class="text-xs text-gray-400 mt-1">Mínimo 8 caracteres.</p>
+            <p class="text-xs text-subtle mt-1">Mínimo 8 caracteres.</p>
           </div>
         </div>
       </BaseCard>
 
-      <p v-if="error" class="text-sm text-red-600 dark:text-red-400">{{ error }}</p>
+      <p v-if="error" class="text-sm text-danger">{{ error }}</p>
 
       <div class="flex gap-3">
         <BaseButton type="submit" variant="brand" :disabled="saving">{{ saving ? 'A criar...' : 'Criar empresa' }}</BaseButton>

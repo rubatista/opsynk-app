@@ -178,12 +178,12 @@ const submit = async () => {
 
 <template>
   <div class="max-w-6xl">
-    <h1 class="text-2xl font-bold mb-6 dark:text-white">Editar Empilhador</h1>
+    <h1 class="text-2xl font-bold mb-6">Editar Empilhador</h1>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
       <form class="lg:col-span-2 space-y-6" @submit.prevent="submit">
         <BaseCard>
-          <h2 class="font-semibold text-sm mb-4 dark:text-white">Informação Geral</h2>
+          <h2 class="font-semibold text-sm mb-4">Informação Geral</h2>
           <div class="space-y-4">
             <BaseInput v-model="name" label="Nome" required />
             <BaseInput v-model="description" label="Descrição" multiline />
@@ -207,20 +207,20 @@ const submit = async () => {
         </BaseCard>
 
         <BaseCard>
-          <h2 class="font-semibold text-sm mb-3 dark:text-white">SEO</h2>
+          <h2 class="font-semibold text-sm mb-3">SEO</h2>
           <div class="space-y-3">
             <div>
               <BaseInput v-model="metaTitle" label="Meta Título" placeholder="Deixar em branco para usar o nome do produto" />
-              <p class="text-xs text-gray-400 mt-1">Recomendado até ~60 caracteres.</p>
+              <p class="text-xs text-subtle mt-1">Recomendado até ~60 caracteres.</p>
             </div>
             <div>
               <BaseInput v-model="metaDescription" label="Meta Descrição" multiline placeholder="Deixar em branco para usar a descrição do produto" />
-              <p class="text-xs text-gray-400 mt-1">Recomendado até ~160 caracteres.</p>
+              <p class="text-xs text-subtle mt-1">Recomendado até ~160 caracteres.</p>
             </div>
           </div>
         </BaseCard>
 
-        <p v-if="error" class="text-sm text-red-600 dark:text-red-400">{{ error }}</p>
+        <p v-if="error" class="text-sm text-danger">{{ error }}</p>
 
         <div class="flex gap-3">
           <BaseButton type="submit" variant="brand">Guardar</BaseButton>
@@ -231,11 +231,11 @@ const submit = async () => {
       <div class="space-y-6">
         <BaseCard>
           <div class="flex items-center justify-between mb-3">
-            <h2 class="font-semibold text-sm dark:text-white">Imagens</h2>
-            <span v-if="reordering" class="text-xs text-gray-400">A guardar...</span>
+            <h2 class="font-semibold text-sm">Imagens</h2>
+            <span v-if="reordering" class="text-xs text-subtle">A guardar...</span>
           </div>
 
-          <p v-if="images.length > 1" class="text-xs text-gray-400 mb-3">
+          <p v-if="images.length > 1" class="text-xs text-subtle mb-3">
             Arraste as imagens para definir a ordem do slide no site.
           </p>
 
@@ -255,33 +255,33 @@ const submit = async () => {
                 {{ index + 1 }}
               </span>
               <button
-                class="absolute top-1 right-1 bg-white/90 rounded-full w-6 h-6 text-xs text-red-600"
+                class="absolute top-1 right-1 bg-white/90 rounded-full w-6 h-6 text-xs text-danger"
                 @click="removeImage(image.id)"
               >
                 ✕
               </button>
             </div>
           </div>
-          <p v-else class="text-sm text-gray-500 dark:text-zinc-400 mb-4">Ainda não há imagens.</p>
+          <p v-else class="text-sm text-muted mb-4">Ainda não há imagens.</p>
 
-          <input ref="fileInput" type="file" accept="image/*" multiple class="text-sm dark:text-zinc-300" @change="handleUpload" />
-          <p v-if="uploading" class="text-sm text-gray-500 dark:text-zinc-400 mt-2">A enviar...</p>
-          <p v-if="uploadError" class="text-sm text-red-600 dark:text-red-400 mt-2">{{ uploadError }}</p>
+          <input ref="fileInput" type="file" accept="image/*" multiple class="text-sm" @change="handleUpload" />
+          <p v-if="uploading" class="text-sm text-muted mt-2">A enviar...</p>
+          <p v-if="uploadError" class="text-sm text-danger mt-2">{{ uploadError }}</p>
         </BaseCard>
 
         <BaseCard v-if="listingType === 'aluguer'">
           <div class="flex items-center justify-between mb-3">
-            <h2 class="font-semibold text-sm dark:text-white">Alugueres</h2>
-            <NuxtLink :to="`/backoffice/alugueres/novo?productId=${id}`" class="text-xs text-brand-500 hover:underline">
+            <h2 class="font-semibold text-sm">Alugueres</h2>
+            <NuxtLink :to="`/backoffice/alugueres/novo?productId=${id}`" class="text-xs text-primary-text hover:underline">
               + Novo Aluguer
             </NuxtLink>
           </div>
 
           <p class="text-sm mb-4">
-            <span v-if="activeRental" class="text-brand-500 font-semibold">
+            <span v-if="activeRental" class="text-primary-text font-semibold">
               Alugado{{ activeRental.client ? ` a ${activeRental.client.name}` : activeRental.renterName ? ` a ${activeRental.renterName}` : '' }}{{ activeRental.endDate ? ` até ${activeRental.endDate}` : '' }}
             </span>
-            <span v-else class="text-gray-500 dark:text-zinc-400">Disponível</span>
+            <span v-else class="text-muted">Disponível</span>
             <NuxtLink
               v-if="activeRental"
               :to="{
@@ -297,13 +297,13 @@ const submit = async () => {
                   amount: price,
                 },
               }"
-              class="block text-xs text-brand-500 hover:underline mt-1"
+              class="block text-xs text-primary-text hover:underline mt-1"
             >
               Emitir Fatura
             </NuxtLink>
           </p>
 
-          <p v-if="!rentalHistory.length" class="text-sm text-gray-500 dark:text-zinc-400">
+          <p v-if="!rentalHistory.length" class="text-sm text-muted">
             Ainda não há alugueres registados.
           </p>
 
@@ -311,31 +311,31 @@ const submit = async () => {
             <li
               v-for="rental in rentalHistory"
               :key="rental.id"
-              class="flex items-center justify-between border border-gray-200 dark:border-zinc-800 rounded-lg px-3 py-2 text-sm"
+              class="flex items-center justify-between border border-line rounded-lg px-3 py-2 text-sm"
             >
-              <span class="dark:text-white">
+              <span>
                 {{ rental.startDate }} — {{ rental.endDate || 'sem data' }}
-                <span class="text-gray-400">({{ rental.status === 'ativo' ? 'Ativo' : 'Terminado' }})</span>
+                <span class="text-subtle">({{ rental.status === 'ativo' ? 'Ativo' : 'Terminado' }})</span>
               </span>
-              <NuxtLink :to="`/backoffice/alugueres/${rental.id}`" class="text-brand-500 hover:underline">Editar</NuxtLink>
+              <NuxtLink :to="`/backoffice/alugueres/${rental.id}`" class="text-primary-text hover:underline">Editar</NuxtLink>
             </li>
           </ul>
         </BaseCard>
 
         <BaseCard v-if="listingType === 'venda'">
-          <h2 class="font-semibold text-sm mb-3 dark:text-white">Venda</h2>
+          <h2 class="font-semibold text-sm mb-3">Venda</h2>
 
           <div v-if="sale">
             <p class="text-sm mb-1">
-              <span class="text-brand-500 font-semibold">
+              <span class="text-primary-text font-semibold">
                 Vendido{{ sale.client ? ` a ${sale.client.name}` : sale.buyerName ? ` a ${sale.buyerName}` : '' }}
                 em {{ sale.date }} por {{ formatCurrency(sale.price) }}
               </span>
             </p>
-            <p v-if="sale.amountDue > 0" class="text-sm text-amber-600 dark:text-amber-400 mb-3">
+            <p v-if="sale.amountDue > 0" class="text-sm text-warning mb-3">
               Falta receber {{ formatCurrency(sale.amountDue) }} — já entrou em Finanças.
             </p>
-            <p v-if="sale.notes" class="text-sm text-gray-600 dark:text-zinc-300 mb-3">{{ sale.notes }}</p>
+            <p v-if="sale.notes" class="text-sm text-ink-soft mb-3">{{ sale.notes }}</p>
             <div class="space-x-3">
               <NuxtLink
                 :to="{
@@ -352,20 +352,20 @@ const submit = async () => {
                     date: sale.date,
                   },
                 }"
-                class="text-sm text-brand-500 hover:underline"
+                class="text-sm text-primary-text hover:underline"
               >
                 Emitir Fatura
               </NuxtLink>
-              <button class="text-sm text-red-600 hover:underline" @click="cancelSale">Anular Venda</button>
+              <button class="text-sm text-danger hover:underline" @click="cancelSale">Anular Venda</button>
             </div>
           </div>
 
           <form v-else class="space-y-3" @submit.prevent="registerSale">
-            <p class="text-sm text-gray-500 dark:text-zinc-400 mb-1">Disponível — regista a venda quando for concluída.</p>
+            <p class="text-sm text-muted mb-1">Disponível — regista a venda quando for concluída.</p>
 
             <div>
               <BaseSelect v-model="saleClientId" label="Cliente registado (opcional)" :options="clientOptions" />
-              <p class="text-xs text-gray-400 mt-1">
+              <p class="text-xs text-subtle mt-1">
                 Se não escolheres um cliente, podes preencher o nome/contacto abaixo.
               </p>
             </div>
@@ -379,13 +379,13 @@ const submit = async () => {
             </div>
             <div>
               <BaseInput v-model.number="saleAmountDue" label="Valor em falta (€)" type="number" step="0.01" />
-              <p class="text-xs text-gray-400 mt-1">
+              <p class="text-xs text-subtle mt-1">
                 Se o cliente ainda não pagou tudo, indica aqui quanto falta receber. É necessário escolher um cliente registado — o valor entra automaticamente em Finanças como "a receber".
               </p>
             </div>
             <BaseInput v-model="saleNotes" label="Notas" multiline />
 
-            <p v-if="saleError" class="text-sm text-red-600 dark:text-red-400">{{ saleError }}</p>
+            <p v-if="saleError" class="text-sm text-danger">{{ saleError }}</p>
 
             <BaseButton type="submit" variant="brand">Registar Venda</BaseButton>
           </form>

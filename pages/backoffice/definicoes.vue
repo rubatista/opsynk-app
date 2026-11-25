@@ -44,12 +44,12 @@ const submit = async () => {
 
 <template>
   <div class="max-w-md">
-    <h1 class="text-2xl font-bold mb-6 dark:text-white">Definições</h1>
+    <h1 class="text-2xl font-bold mb-6">Definições</h1>
 
     <form class="space-y-6" @submit.prevent="submit">
       <BaseCard>
-        <h2 class="font-semibold text-sm mb-3 dark:text-white">Dados da Empresa</h2>
-        <p class="text-xs text-gray-400 mb-3">Usados no cabeçalho das faturas e orçamentos gerados.</p>
+        <h2 class="font-semibold text-sm mb-3">Dados da Empresa</h2>
+        <p class="text-xs text-subtle mb-3">Usados no cabeçalho das faturas e orçamentos gerados.</p>
         <div class="space-y-3">
           <BaseInput v-model="companyName" label="Nome da Empresa" />
           <BaseInput v-model="companyNif" label="NIF" />
@@ -62,25 +62,25 @@ const submit = async () => {
       </BaseCard>
 
       <BaseCard>
-        <h2 class="font-semibold text-sm mb-3 dark:text-white">SEO</h2>
+        <h2 class="font-semibold text-sm mb-3">SEO</h2>
         <div class="space-y-3">
           <div>
             <BaseInput v-model="metaTitle" label="Meta Título do Site" />
-            <p class="text-xs text-gray-400 mt-1">Recomendado até ~60 caracteres.</p>
+            <p class="text-xs text-subtle mt-1">Recomendado até ~60 caracteres.</p>
           </div>
           <div>
             <BaseInput v-model="metaDescription" label="Meta Descrição do Site" multiline />
-            <p class="text-xs text-gray-400 mt-1">Recomendado até ~160 caracteres.</p>
+            <p class="text-xs text-subtle mt-1">Recomendado até ~160 caracteres.</p>
           </div>
           <div>
             <BaseInput v-model="ogImage" label="Imagem OG (URL)" placeholder="/uploads/products/exemplo.jpg" />
-            <p class="text-xs text-gray-400 mt-1">Usa o URL de uma imagem já enviada num produto.</p>
+            <p class="text-xs text-subtle mt-1">Usa o URL de uma imagem já enviada num produto.</p>
           </div>
         </div>
       </BaseCard>
 
-      <p v-if="error" class="text-sm text-red-600 dark:text-red-400">{{ error }}</p>
-      <p v-if="saved" class="text-sm text-brand-500">Definições guardadas.</p>
+      <p v-if="error" class="text-sm text-danger">{{ error }}</p>
+      <p v-if="saved" class="text-sm text-primary-text">Definições guardadas.</p>
 
       <BaseButton type="submit" variant="brand">Guardar</BaseButton>
     </form>

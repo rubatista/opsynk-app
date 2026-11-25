@@ -23,7 +23,7 @@ const totalToPay = transactions
 <template>
   <div class="max-w-6xl">
     <div class="flex items-center justify-between mb-6">
-      <h1 class="text-2xl font-bold dark:text-white">{{ client.name }}</h1>
+      <h1 class="text-2xl font-bold">{{ client.name }}</h1>
       <div class="flex gap-3">
         <BaseButton :to="`/backoffice/clientes/${id}/editar`" variant="brand">Editar</BaseButton>
         <BaseButton to="/backoffice/clientes" variant="secondary">Voltar</BaseButton>
@@ -33,9 +33,9 @@ const totalToPay = transactions
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
       <div class="lg:col-span-2 space-y-6">
         <BaseCard>
-          <h2 class="font-semibold text-sm mb-3 dark:text-white">Equipamentos</h2>
+          <h2 class="font-semibold text-sm mb-3">Equipamentos</h2>
 
-          <p v-if="!equipmentList.length" class="text-sm text-gray-500 dark:text-zinc-400">
+          <p v-if="!equipmentList.length" class="text-sm text-muted">
             Ainda não há equipamentos associados a este cliente.
           </p>
 
@@ -43,18 +43,18 @@ const totalToPay = transactions
             <li
               v-for="item in equipmentList"
               :key="item.id"
-              class="flex items-center justify-between border border-gray-200 dark:border-zinc-800 rounded-lg px-3 py-2 text-sm"
+              class="flex items-center justify-between border border-line rounded-lg px-3 py-2 text-sm"
             >
-              <span class="dark:text-white">{{ item.brand }} {{ item.model }}</span>
-              <NuxtLink :to="`/backoffice/equipamentos/${item.id}`" class="text-brand-500 hover:underline">Ver</NuxtLink>
+              <span>{{ item.brand }} {{ item.model }}</span>
+              <NuxtLink :to="`/backoffice/equipamentos/${item.id}`" class="text-primary-text hover:underline">Ver</NuxtLink>
             </li>
           </ul>
         </BaseCard>
 
         <BaseCard>
-          <h2 class="font-semibold text-sm mb-3 dark:text-white">Alugueres</h2>
+          <h2 class="font-semibold text-sm mb-3">Alugueres</h2>
 
-          <p v-if="!rentals.length" class="text-sm text-gray-500 dark:text-zinc-400">
+          <p v-if="!rentals.length" class="text-sm text-muted">
             Este cliente ainda não alugou nenhum produto.
           </p>
 
@@ -62,23 +62,23 @@ const totalToPay = transactions
             <li
               v-for="rental in rentals"
               :key="rental.id"
-              class="flex items-center justify-between border border-gray-200 dark:border-zinc-800 rounded-lg px-3 py-2 text-sm"
+              class="flex items-center justify-between border border-line rounded-lg px-3 py-2 text-sm"
             >
-              <span class="dark:text-white">
+              <span>
                 {{ rental.product?.name || '—' }}
-                <span class="text-gray-400">
+                <span class="text-subtle">
                   ({{ rental.startDate }} — {{ rental.endDate || 'sem data' }}, {{ rental.status === 'ativo' ? 'Ativo' : 'Terminado' }})
                 </span>
               </span>
-              <NuxtLink v-if="rental.product" :to="`/backoffice/produtos/${rental.product.id}`" class="text-brand-500 hover:underline">Ver</NuxtLink>
+              <NuxtLink v-if="rental.product" :to="`/backoffice/produtos/${rental.product.id}`" class="text-primary-text hover:underline">Ver</NuxtLink>
             </li>
           </ul>
         </BaseCard>
 
         <BaseCard>
-          <h2 class="font-semibold text-sm mb-3 dark:text-white">Compras</h2>
+          <h2 class="font-semibold text-sm mb-3">Compras</h2>
 
-          <p v-if="!purchases.length" class="text-sm text-gray-500 dark:text-zinc-400">
+          <p v-if="!purchases.length" class="text-sm text-muted">
             Este cliente ainda não comprou nenhum produto.
           </p>
 
@@ -86,16 +86,16 @@ const totalToPay = transactions
             <li
               v-for="sale in purchases"
               :key="sale.id"
-              class="flex items-center justify-between border border-gray-200 dark:border-zinc-800 rounded-lg px-3 py-2 text-sm"
+              class="flex items-center justify-between border border-line rounded-lg px-3 py-2 text-sm"
             >
-              <span class="dark:text-white">
+              <span>
                 {{ sale.product?.name || '—' }}
-                <span class="text-gray-400">({{ sale.date }}, {{ formatCurrency(sale.price) }})</span>
-                <span v-if="sale.amountDue > 0" class="text-amber-600 dark:text-amber-400">
+                <span class="text-subtle">({{ sale.date }}, {{ formatCurrency(sale.price) }})</span>
+                <span v-if="sale.amountDue > 0" class="text-warning">
                   — falta receber {{ formatCurrency(sale.amountDue) }}
                 </span>
               </span>
-              <NuxtLink v-if="sale.product" :to="`/backoffice/produtos/${sale.product.id}`" class="text-brand-500 hover:underline">Ver</NuxtLink>
+              <NuxtLink v-if="sale.product" :to="`/backoffice/produtos/${sale.product.id}`" class="text-primary-text hover:underline">Ver</NuxtLink>
             </li>
           </ul>
         </BaseCard>
@@ -103,52 +103,52 @@ const totalToPay = transactions
 
       <div class="space-y-6">
         <BaseCard>
-          <h2 class="font-semibold text-sm mb-3 dark:text-white">Contacto</h2>
+          <h2 class="font-semibold text-sm mb-3">Contacto</h2>
           <dl class="space-y-3 text-sm">
             <div>
-              <dt class="text-gray-500 dark:text-zinc-400">Telefone</dt>
-              <dd class="dark:text-white">{{ client.phone || '—' }}</dd>
+              <dt class="text-muted">Telefone</dt>
+              <dd>{{ client.phone || '—' }}</dd>
             </div>
             <div>
-              <dt class="text-gray-500 dark:text-zinc-400">Email</dt>
-              <dd class="dark:text-white">{{ client.email || '—' }}</dd>
+              <dt class="text-muted">Email</dt>
+              <dd>{{ client.email || '—' }}</dd>
             </div>
             <div>
-              <dt class="text-gray-500 dark:text-zinc-400">Morada</dt>
-              <dd class="dark:text-white">{{ client.address || '—' }}</dd>
+              <dt class="text-muted">Morada</dt>
+              <dd>{{ client.address || '—' }}</dd>
             </div>
           </dl>
         </BaseCard>
 
         <BaseCard>
-          <h2 class="font-semibold text-sm mb-3 dark:text-white">Finanças</h2>
+          <h2 class="font-semibold text-sm mb-3">Finanças</h2>
           <div class="grid grid-cols-2 gap-3 mb-4">
             <div>
-              <p class="text-xs text-gray-500 dark:text-zinc-400">Dívidas</p>
-              <p class="text-lg font-bold" :class="totalDebt > 0 ? 'text-red-500' : 'text-brand-500'">{{ formatCurrency(totalDebt) }}</p>
+              <p class="text-xs text-muted">Dívidas</p>
+              <p class="text-lg font-bold" :class="totalDebt > 0 ? 'text-danger' : 'text-primary-text'">{{ formatCurrency(totalDebt) }}</p>
             </div>
             <div>
-              <p class="text-xs text-gray-500 dark:text-zinc-400">A pagar</p>
-              <p class="text-lg font-bold text-brand-500">{{ formatCurrency(totalToPay) }}</p>
+              <p class="text-xs text-muted">A pagar</p>
+              <p class="text-lg font-bold text-primary-text">{{ formatCurrency(totalToPay) }}</p>
             </div>
           </div>
 
-          <p v-if="!debts.length" class="text-sm text-gray-500 dark:text-zinc-400">Sem dívidas pendentes.</p>
+          <p v-if="!debts.length" class="text-sm text-muted">Sem dívidas pendentes.</p>
 
           <ul v-else class="space-y-2">
             <li
               v-for="debt in debts"
               :key="debt.id"
-              class="flex items-center justify-between border border-gray-200 dark:border-zinc-800 rounded-lg px-3 py-2 text-sm"
+              class="flex items-center justify-between border border-line rounded-lg px-3 py-2 text-sm"
             >
-              <span class="dark:text-white">
+              <span>
                 {{ debt.description }}
-                <span class="text-gray-400 block text-xs">
+                <span class="text-subtle block text-xs">
                   {{ debt.date }}
                   <span v-if="debt.remainingAmount < debt.amount">· de {{ formatCurrency(debt.amount) }}</span>
                 </span>
               </span>
-              <span class="font-semibold text-red-500 shrink-0 ml-2">{{ formatCurrency(debt.remainingAmount) }}</span>
+              <span class="font-semibold text-danger shrink-0 ml-2">{{ formatCurrency(debt.remainingAmount) }}</span>
             </li>
           </ul>
         </BaseCard>
