@@ -35,6 +35,14 @@ Contas do seed (password `password123`):
 - **Endpoint do backoffice:** usa `const { tenantId } = requireTenant(event)` e filtra todas as queries por `tenantId`.
 - **Ids recebidos no body** (clientId, productId…): valida-os com `ownedIdOrNull` ou `requireOwned` (em `server/utils/tenant.ts`).
 - **Endpoint público:** vai em `server/api/site/` e usa `resolveSiteTenant(event)`. No frontend chama-se com `useSiteFetch`.
+- **Cores no backoffice e no admin:** usa as classes semânticas, que já trazem os valores para modo claro e escuro, em vez de pares `gray-*`/`zinc-*` com `dark:`:
+  - Superfícies: `bg-canvas`, `bg-surface`, `bg-surface-muted`
+  - Texto: `text-ink`, `text-ink-soft`, `text-muted`, `text-subtle`
+  - Bordas: `border-line`, `border-line-strong`
+  - Cor principal: `bg-primary`, `bg-primary-soft`, `text-primary-text`
+  - Estados: `success`, `warning`, `danger` e `info`, cada um com a variante `-soft`
+
+  Os valores estão em `assets/css/main.css`.
 
 ## 🧭 Plano: Estrutura Frontoffice / Backoffice + Backend
 
