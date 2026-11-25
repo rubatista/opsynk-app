@@ -63,14 +63,14 @@ const submit = async () => {
 
 <template>
   <div class="max-w-md">
-    <h1 class="text-2xl font-bold mb-6 dark:text-white">Novo Documento</h1>
+    <h1 class="text-2xl font-bold mb-6">Novo Documento</h1>
 
-    <form class="space-y-4" @submit.prevent="submit">
+    <form class="space-y-4 bg-surface border border-line rounded-2xl p-5 sm:p-6 shadow-card" @submit.prevent="submit">
       <BaseSelect v-model="type" label="Tipo" :options="typeOptions" required />
 
       <div>
         <BaseSelect v-model="clientId" label="Cliente registado (opcional)" :options="clientOptions" />
-        <p class="text-xs text-gray-400 mt-1">
+        <p class="text-xs text-subtle mt-1">
           Se não escolheres um cliente, podes preencher o nome/contacto abaixo.
         </p>
       </div>
@@ -86,7 +86,7 @@ const submit = async () => {
       </div>
       <BaseInput v-model="notes" label="Notas" multiline />
 
-      <p v-if="error" class="text-sm text-red-600 dark:text-red-400">{{ error }}</p>
+      <p v-if="error" class="text-sm text-danger">{{ error }}</p>
 
       <div class="flex gap-3">
         <BaseButton type="submit" variant="brand" :disabled="submitting">

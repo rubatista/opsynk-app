@@ -1,9 +1,9 @@
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { useDatabase } from '../../database/client'
 import { leads } from '../../database/schema'
 
 export default defineEventHandler((event) => {
-  requireUser(event)
+  const { tenantId } = requireTenant(event)
 
   const id = Number(getRouterParam(event, 'id'))
   if (!Number.isFinite(id)) {
@@ -11,7 +11,11 @@ export default defineEventHandler((event) => {
   }
 
   const db = useDatabase()
-  const [deleted] = db.delete(leads).where(eq(leads.id, id)).returning().all()
+  const [deleted] = db
+    .delete(leads)
+    .where(and(eq(leads.id, id), eq(leads.tenantId, tenantId)))
+    .returning()
+    .all()
 
   if (!deleted) {
     throw createError({ statusCode: 404, statusMessage: 'Lead not found' })

@@ -1,20 +1,25 @@
-import { like } from 'drizzle-orm'
+import { and, eq, like } from 'drizzle-orm'
 import { useDatabase } from '../../database/client'
-import { documents } from '../../database/schema'
+import { documents, clients, sales, rentals, maintenances } from '../../database/schema'
 
 const TYPES = ['fatura', 'orcamento'] as const
-const SOURCE_TYPES = ['venda', 'aluguer', 'manutencao'] as const
+const SOURCE_TABLES = { venda: sales, aluguer: rentals, manutencao: maintenances } as const
 const PREFIXES: Record<(typeof TYPES)[number], string> = {
   fatura: 'FT',
   orcamento: 'ORC',
 }
 
-function nextNumber(db: ReturnType<typeof useDatabase>, type: (typeof TYPES)[number]) {
+// Each tenant has its own yearly sequence (FT 2026/0001, ...).
+function nextNumber(db: ReturnType<typeof useDatabase>, tenantId: number, type: (typeof TYPES)[number]) {
   const prefix = PREFIXES[type]
   const year = new Date().getFullYear()
   const pattern = `${prefix} ${year}/%`
 
-  const existing = db.select().from(documents).where(like(documents.number, pattern)).all()
+  const existing = db
+    .select()
+    .from(documents)
+    .where(and(eq(documents.tenantId, tenantId), like(documents.number, pattern)))
+    .all()
   const maxSeq = existing.reduce((max, doc) => {
     const seq = Number(doc.number.split('/').pop())
     return Number.isFinite(seq) && seq > max ? seq : max
@@ -24,13 +29,14 @@ function nextNumber(db: ReturnType<typeof useDatabase>, type: (typeof TYPES)[num
 }
 
 export default defineEventHandler(async (event) => {
-  requireUser(event)
+  const { tenantId } = requireTenant(event)
 
   const body = await readBody(event)
   const type = TYPES.includes(body?.type) ? body.type : null
-  const sourceType = body?.sourceType && SOURCE_TYPES.includes(body.sourceType) ? body.sourceType : null
-  const sourceId = body?.sourceId ? Number(body.sourceId) : null
-  const clientId = body?.clientId ? Number(body.clientId) : null
+  const sourceType: keyof typeof SOURCE_TABLES | null =
+    body?.sourceType && body.sourceType in SOURCE_TABLES ? body.sourceType : null
+  const sourceId = sourceType ? ownedIdOrNull(SOURCE_TABLES[sourceType], body?.sourceId, tenantId, 'Origem do documento') : null
+  const clientId = ownedIdOrNull(clients, body?.clientId, tenantId, 'Cliente')
   const buyerName = typeof body?.buyerName === 'string' ? body.buyerName.trim() || null : null
   const buyerContact = typeof body?.buyerContact === 'string' ? body.buyerContact.trim() || null : null
   const description = typeof body?.description === 'string' ? body.description.trim() : ''
@@ -46,13 +52,15 @@ export default defineEventHandler(async (event) => {
   }
 
   const db = useDatabase()
-  const number = nextNumber(db, type)
-
-  const [created] = db
-    .insert(documents)
-    .values({ type, number, sourceType, sourceId, clientId, buyerName, buyerContact, description, amount, date, notes })
-    .returning()
-    .all()
+  const created = db.transaction((tx) => {
+    const number = nextNumber(tx as any, tenantId, type)
+    const [row] = tx
+      .insert(documents)
+      .values({ tenantId, type, number, sourceType, sourceId, clientId, buyerName, buyerContact, description, amount, date, notes })
+      .returning()
+      .all()
+    return row
+  })
 
   setResponseStatus(event, 201)
   return created

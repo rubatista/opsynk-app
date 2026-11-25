@@ -1,9 +1,8 @@
-import { eq } from 'drizzle-orm'
 import { useDatabase } from '../../../database/client'
 import { clients, clientNotes } from '../../../database/schema'
 
 export default defineEventHandler(async (event) => {
-  requireUser(event)
+  const { tenantId } = requireTenant(event)
 
   const clientId = Number(getRouterParam(event, 'id'))
   if (!Number.isFinite(clientId)) {
@@ -16,13 +15,10 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: 'content is required' })
   }
 
-  const db = useDatabase()
-  const client = db.select().from(clients).where(eq(clients.id, clientId)).get()
-  if (!client) {
-    throw createError({ statusCode: 404, statusMessage: 'Client not found' })
-  }
+  requireOwned(clients, clientId, tenantId, 'Client not found')
 
-  const [created] = db.insert(clientNotes).values({ clientId, content }).returning().all()
+  const db = useDatabase()
+  const [created] = db.insert(clientNotes).values({ tenantId, clientId, content }).returning().all()
 
   setResponseStatus(event, 201)
   return created

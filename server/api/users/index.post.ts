@@ -3,7 +3,7 @@ import { useDatabase } from '../../database/client'
 import { users } from '../../database/schema'
 
 export default defineEventHandler(async (event) => {
-  requireUser(event)
+  const { tenantId } = requireTenant(event)
 
   const body = await readBody(event)
   const email = typeof body?.email === 'string' ? body.email.trim().toLowerCase() : ''
@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
   try {
     const [created] = db
       .insert(users)
-      .values({ email, passwordHash, name })
+      .values({ tenantId, role: 'admin', email, passwordHash, name })
       .returning({ id: users.id, email: users.email, name: users.name, createdAt: users.createdAt })
       .all()
 

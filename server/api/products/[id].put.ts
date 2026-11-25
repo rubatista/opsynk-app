@@ -1,9 +1,9 @@
-import { eq, sql } from 'drizzle-orm'
+import { and, eq, sql } from 'drizzle-orm'
 import { useDatabase } from '../../database/client'
 import { products } from '../../database/schema'
 
 export default defineEventHandler(async (event) => {
-  requireUser(event)
+  const { tenantId } = requireTenant(event)
 
   const id = Number(getRouterParam(event, 'id'))
   if (!Number.isFinite(id)) {
@@ -23,7 +23,7 @@ export default defineEventHandler(async (event) => {
   const [updated] = db
     .update(products)
     .set({ ...updates, updatedAt: sql`(current_timestamp)` })
-    .where(eq(products.id, id))
+    .where(and(eq(products.id, id), eq(products.tenantId, tenantId)))
     .returning()
     .all()
 

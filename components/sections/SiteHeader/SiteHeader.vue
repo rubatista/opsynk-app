@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const { data: site } = await useSiteSettings()
+
 const menuOpen = ref(false)
 
 const route = useRoute()
@@ -12,7 +14,7 @@ watch(
   <header class="border-b border-gray-200 bg-white sticky top-0 z-20">
     <nav class="max-w-6xl mx-auto flex items-center justify-between px-6 py-4">
       <NuxtLink to="/" class="font-black text-lg tracking-tight text-gray-900">
-        OPSYNK <span class="text-brand-500">Empilhadores</span>
+        {{ site?.name }}
       </NuxtLink>
 
       <div class="hidden sm:flex items-center gap-8 text-sm font-semibold text-gray-700">

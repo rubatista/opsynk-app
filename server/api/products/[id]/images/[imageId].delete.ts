@@ -5,7 +5,7 @@ import { useDatabase } from '../../../../database/client'
 import { productImages } from '../../../../database/schema'
 
 export default defineEventHandler(async (event) => {
-  requireUser(event)
+  const { tenantId } = requireTenant(event)
 
   const productId = Number(getRouterParam(event, 'id'))
   const imageId = Number(getRouterParam(event, 'imageId'))
@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
   const db = useDatabase()
   const [deleted] = db
     .delete(productImages)
-    .where(and(eq(productImages.id, imageId), eq(productImages.productId, productId)))
+    .where(and(eq(productImages.id, imageId), eq(productImages.productId, productId), eq(productImages.tenantId, tenantId)))
     .returning()
     .all()
 

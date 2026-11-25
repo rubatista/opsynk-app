@@ -2,7 +2,7 @@ import { useDatabase } from '../../database/client'
 import { products } from '../../database/schema'
 
 export default defineEventHandler(async (event) => {
-  requireUser(event)
+  const { tenantId } = requireTenant(event)
 
   const body = await readBody(event)
   const name = typeof body?.name === 'string' ? body.name.trim() : ''
@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
   const db = useDatabase()
   const [created] = db
     .insert(products)
-    .values({ name, description, price, stock, ...parseProductFields(body) })
+    .values({ ...parseProductFields(body), tenantId, name, description, price, stock })
     .returning()
     .all()
 

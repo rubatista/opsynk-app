@@ -1,25 +1,26 @@
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { useDatabase } from '../../database/client'
 import { rentals, products, clients } from '../../database/schema'
 
 export default defineEventHandler((event) => {
-  requireUser(event)
+  const { tenantId } = requireTenant(event)
 
   const query = getQuery(event)
   const productId = query.productId ? Number(query.productId) : null
   const clientId = query.clientId ? Number(query.clientId) : null
 
   const db = useDatabase()
+  const ownRentals = eq(rentals.tenantId, tenantId)
   const rows = productId
-    ? db.select().from(rentals).where(eq(rentals.productId, productId)).all()
+    ? db.select().from(rentals).where(and(ownRentals, eq(rentals.productId, productId))).all()
     : clientId
-      ? db.select().from(rentals).where(eq(rentals.clientId, clientId)).all()
-      : db.select().from(rentals).all()
+      ? db.select().from(rentals).where(and(ownRentals, eq(rentals.clientId, clientId))).all()
+      : db.select().from(rentals).where(ownRentals).all()
 
-  const productRows = db.select().from(products).all()
+  const productRows = db.select().from(products).where(eq(products.tenantId, tenantId)).all()
   const productMap = new Map(productRows.map((product: any) => [product.id, product]))
 
-  const clientRows = db.select().from(clients).all()
+  const clientRows = db.select().from(clients).where(eq(clients.tenantId, tenantId)).all()
   const clientMap = new Map(clientRows.map((client: any) => [client.id, client]))
 
   const withRefs = rows.map((row: any) => ({

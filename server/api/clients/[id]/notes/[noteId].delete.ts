@@ -3,7 +3,7 @@ import { useDatabase } from '../../../../database/client'
 import { clientNotes } from '../../../../database/schema'
 
 export default defineEventHandler((event) => {
-  requireUser(event)
+  const { tenantId } = requireTenant(event)
 
   const clientId = Number(getRouterParam(event, 'id'))
   const noteId = Number(getRouterParam(event, 'noteId'))
@@ -14,7 +14,7 @@ export default defineEventHandler((event) => {
   const db = useDatabase()
   const [deleted] = db
     .delete(clientNotes)
-    .where(and(eq(clientNotes.id, noteId), eq(clientNotes.clientId, clientId)))
+    .where(and(eq(clientNotes.id, noteId), eq(clientNotes.clientId, clientId), eq(clientNotes.tenantId, tenantId)))
     .returning()
     .all()
 

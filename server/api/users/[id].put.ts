@@ -1,10 +1,10 @@
 import bcrypt from 'bcryptjs'
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { useDatabase } from '../../database/client'
 import { users } from '../../database/schema'
 
 export default defineEventHandler(async (event) => {
-  requireUser(event)
+  const { tenantId } = requireTenant(event)
 
   const id = Number(getRouterParam(event, 'id'))
   if (!Number.isFinite(id)) {
@@ -21,14 +21,17 @@ export default defineEventHandler(async (event) => {
   }
 
   const db = useDatabase()
+  const ownUser = and(eq(users.id, id), eq(users.tenantId, tenantId))
+  const columns = { id: users.id, email: users.email, name: users.name, createdAt: users.createdAt }
+
+  if (!Object.keys(updates).length) {
+    const user = db.select(columns).from(users).where(ownUser).get()
+    if (!user) throw createError({ statusCode: 404, statusMessage: 'User not found' })
+    return user
+  }
 
   try {
-    const [updated] = db
-      .update(users)
-      .set(updates)
-      .where(eq(users.id, id))
-      .returning({ id: users.id, email: users.email, name: users.name, createdAt: users.createdAt })
-      .all()
+    const [updated] = db.update(users).set(updates).where(ownUser).returning(columns).all()
 
     if (!updated) {
       throw createError({ statusCode: 404, statusMessage: 'User not found' })

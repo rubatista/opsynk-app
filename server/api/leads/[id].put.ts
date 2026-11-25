@@ -1,11 +1,11 @@
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { useDatabase } from '../../database/client'
 import { leads } from '../../database/schema'
 
 const STATUSES = ['novo', 'contactado'] as const
 
 export default defineEventHandler(async (event) => {
-  requireUser(event)
+  const { tenantId } = requireTenant(event)
 
   const id = Number(getRouterParam(event, 'id'))
   if (!Number.isFinite(id)) {
@@ -18,7 +18,12 @@ export default defineEventHandler(async (event) => {
   }
 
   const db = useDatabase()
-  const [updated] = db.update(leads).set({ status: body.status }).where(eq(leads.id, id)).returning().all()
+  const [updated] = db
+    .update(leads)
+    .set({ status: body.status })
+    .where(and(eq(leads.id, id), eq(leads.tenantId, tenantId)))
+    .returning()
+    .all()
 
   if (!updated) {
     throw createError({ statusCode: 404, statusMessage: 'Lead not found' })

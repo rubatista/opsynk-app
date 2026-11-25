@@ -45,28 +45,28 @@ const submit = async () => {
 
 <template>
   <div class="max-w-md">
-    <h1 class="text-2xl font-bold mb-6 dark:text-white">Nova Manutenção</h1>
+    <h1 class="text-2xl font-bold mb-6">Nova Manutenção</h1>
 
-    <p v-if="!equipmentOptions.length" class="text-sm text-gray-500 dark:text-zinc-400 mb-4">
+    <p v-if="!equipmentOptions.length" class="text-sm text-muted mb-4">
       Ainda não há equipamentos registados.
-      <NuxtLink to="/backoffice/equipamentos/novo" class="text-brand-500 hover:underline">Criar um equipamento</NuxtLink>
+      <NuxtLink to="/backoffice/equipamentos/novo" class="text-primary-text hover:underline">Criar um equipamento</NuxtLink>
       primeiro.
     </p>
 
-    <form v-else class="space-y-4" @submit.prevent="submit">
+    <form v-else class="space-y-4 bg-surface border border-line rounded-2xl p-5 sm:p-6 shadow-card" @submit.prevent="submit">
       <BaseSelect v-model="equipmentId" label="Equipamento" :options="equipmentOptions" required />
       <BaseInput v-model="performedAt" label="Feita em" type="date" required />
       <BaseInput v-model="description" label="O que foi feito" multiline required />
 
-      <div class="pt-2 border-t border-gray-100 dark:border-zinc-800">
-        <p class="text-sm font-semibold mt-3 mb-3 dark:text-white">Próxima manutenção (opcional)</p>
+      <div class="pt-2 border-t border-line">
+        <p class="text-sm font-semibold mt-3 mb-3">Próxima manutenção (opcional)</p>
         <BaseInput v-model="nextDueDate" label="Data" type="date" />
         <div class="mt-3">
           <BaseInput v-model="nextDueNotes" label="O que é preciso fazer" multiline />
         </div>
       </div>
 
-      <p v-if="error" class="text-sm text-red-600 dark:text-red-400">{{ error }}</p>
+      <p v-if="error" class="text-sm text-danger">{{ error }}</p>
 
       <div class="flex gap-3">
         <BaseButton type="submit" variant="brand">Guardar</BaseButton>

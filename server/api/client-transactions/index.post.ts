@@ -1,11 +1,10 @@
-import { eq } from 'drizzle-orm'
 import { useDatabase } from '../../database/client'
 import { clientTransactions, clients } from '../../database/schema'
 
 const TYPES = ['a_receber', 'a_pagar'] as const
 
 export default defineEventHandler(async (event) => {
-  requireUser(event)
+  const { tenantId } = requireTenant(event)
 
   const body = await readBody(event)
   const clientId = Number(body?.clientId)
@@ -21,15 +20,12 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const db = useDatabase()
-  const client = db.select().from(clients).where(eq(clients.id, clientId)).get()
-  if (!client) {
-    throw createError({ statusCode: 404, statusMessage: 'Client not found' })
-  }
+  requireOwned(clients, clientId, tenantId, 'Client not found')
 
+  const db = useDatabase()
   const [created] = db
     .insert(clientTransactions)
-    .values({ clientId, type, amount, description, date })
+    .values({ tenantId, clientId, type, amount, description, date })
     .returning()
     .all()
 

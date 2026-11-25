@@ -26,7 +26,7 @@ const energyLabels: Record<string, string> = {
 <template>
   <div class="max-w-6xl">
     <div class="flex items-center justify-between mb-2">
-      <h1 class="text-2xl font-bold dark:text-white">{{ product.name }}</h1>
+      <h1 class="text-2xl font-bold">{{ product.name }}</h1>
       <div class="flex gap-3">
         <BaseButton :to="`/backoffice/produtos/${id}/editar`" variant="brand">Editar</BaseButton>
         <BaseButton to="/backoffice/produtos" variant="secondary">Voltar</BaseButton>
@@ -40,7 +40,7 @@ const energyLabels: Record<string, string> = {
       <span
         v-if="product.listingType === 'aluguer'"
         class="text-sm font-semibold"
-        :class="activeRental ? 'text-red-500' : 'text-gray-400'"
+        :class="activeRental ? 'text-danger' : 'text-subtle'"
       >
         {{
           activeRental
@@ -51,11 +51,11 @@ const energyLabels: Record<string, string> = {
       <span
         v-else
         class="text-sm font-semibold"
-        :class="sale ? 'text-red-500' : 'text-gray-400'"
+        :class="sale ? 'text-danger' : 'text-subtle'"
       >
         {{ sale ? `Vendido${sale.client ? ` a ${sale.client.name}` : sale.buyerName ? ` a ${sale.buyerName}` : ''} em ${sale.date}` : 'Disponível' }}
       </span>
-      <span v-if="sale && sale.amountDue > 0" class="text-sm font-semibold text-amber-600 dark:text-amber-400">
+      <span v-if="sale && sale.amountDue > 0" class="text-sm font-semibold text-warning">
         (falta receber {{ formatCurrency(sale.amountDue) }})
       </span>
     </div>
@@ -63,7 +63,7 @@ const energyLabels: Record<string, string> = {
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
       <div class="lg:col-span-2 space-y-6">
         <BaseCard v-if="product.images?.length">
-          <h2 class="font-semibold text-sm mb-3 dark:text-white">Imagens</h2>
+          <h2 class="font-semibold text-sm mb-3">Imagens</h2>
           <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
             <img
               v-for="image in product.images"
@@ -75,41 +75,41 @@ const energyLabels: Record<string, string> = {
         </BaseCard>
 
         <BaseCard v-if="product.description">
-          <h2 class="font-semibold text-sm mb-2 dark:text-white">Descrição</h2>
-          <p class="text-sm dark:text-zinc-200 whitespace-pre-wrap">{{ product.description }}</p>
+          <h2 class="font-semibold text-sm mb-2">Descrição</h2>
+          <p class="text-sm whitespace-pre-wrap">{{ product.description }}</p>
         </BaseCard>
       </div>
 
       <BaseCard>
-        <h2 class="font-semibold text-sm mb-3 dark:text-white">Especificações</h2>
+        <h2 class="font-semibold text-sm mb-3">Especificações</h2>
         <dl class="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
           <div>
-            <dt class="text-gray-500 dark:text-zinc-400">Marca</dt>
-            <dd class="dark:text-white">{{ product.brand || '—' }}</dd>
+            <dt class="text-muted">Marca</dt>
+            <dd>{{ product.brand || '—' }}</dd>
           </div>
           <div>
-            <dt class="text-gray-500 dark:text-zinc-400">Modelo</dt>
-            <dd class="dark:text-white">{{ product.model || '—' }}</dd>
+            <dt class="text-muted">Modelo</dt>
+            <dd>{{ product.model || '—' }}</dd>
           </div>
           <div>
-            <dt class="text-gray-500 dark:text-zinc-400">Capacidade</dt>
-            <dd class="dark:text-white">{{ product.capacityKg ? `${product.capacityKg} kg` : '—' }}</dd>
+            <dt class="text-muted">Capacidade</dt>
+            <dd>{{ product.capacityKg ? `${product.capacityKg} kg` : '—' }}</dd>
           </div>
           <div>
-            <dt class="text-gray-500 dark:text-zinc-400">Ano</dt>
-            <dd class="dark:text-white">{{ product.year || '—' }}</dd>
+            <dt class="text-muted">Ano</dt>
+            <dd>{{ product.year || '—' }}</dd>
           </div>
           <div>
-            <dt class="text-gray-500 dark:text-zinc-400">Energia</dt>
-            <dd class="dark:text-white">{{ energyLabels[product.energyType] || product.energyType || '—' }}</dd>
+            <dt class="text-muted">Energia</dt>
+            <dd>{{ energyLabels[product.energyType] || product.energyType || '—' }}</dd>
           </div>
           <div>
-            <dt class="text-gray-500 dark:text-zinc-400">Preço</dt>
-            <dd class="dark:text-white">{{ formatCurrency(product.price) }}</dd>
+            <dt class="text-muted">Preço</dt>
+            <dd>{{ formatCurrency(product.price) }}</dd>
           </div>
           <div>
-            <dt class="text-gray-500 dark:text-zinc-400">Stock</dt>
-            <dd class="dark:text-white">{{ product.stock }}</dd>
+            <dt class="text-muted">Stock</dt>
+            <dd>{{ product.stock }}</dd>
           </div>
         </dl>
       </BaseCard>

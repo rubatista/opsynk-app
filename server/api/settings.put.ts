@@ -3,7 +3,7 @@ import { useDatabase } from '../database/client'
 import { siteSettings } from '../database/schema'
 
 export default defineEventHandler(async (event) => {
-  requireUser(event)
+  const { tenantId } = requireTenant(event)
 
   const body = await readBody(event)
   const metaTitle = typeof body?.metaTitle === 'string' ? body.metaTitle.trim() || null : null
@@ -27,18 +27,12 @@ export default defineEventHandler(async (event) => {
   }
 
   const db = useDatabase()
-  const existing = db.select().from(siteSettings).get()
+  const [saved] = db
+    .insert(siteSettings)
+    .values({ tenantId, ...values })
+    .onConflictDoUpdate({ target: siteSettings.tenantId, set: { ...values, updatedAt: sql`(current_timestamp)` } })
+    .returning()
+    .all()
 
-  if (existing) {
-    const [updated] = db
-      .update(siteSettings)
-      .set({ ...values, updatedAt: sql`(current_timestamp)` })
-      .where(eq(siteSettings.id, existing.id))
-      .returning()
-      .all()
-    return updated
-  }
-
-  const [created] = db.insert(siteSettings).values(values).returning().all()
-  return created
+  return saved
 })

@@ -1,9 +1,8 @@
-import { eq } from 'drizzle-orm'
 import { useDatabase } from '../../database/client'
 import { maintenances, equipment } from '../../database/schema'
 
 export default defineEventHandler(async (event) => {
-  requireUser(event)
+  const { tenantId } = requireTenant(event)
 
   const body = await readBody(event)
   const equipmentId = Number(body?.equipmentId)
@@ -16,15 +15,12 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: 'equipmentId, performedAt and description are required' })
   }
 
-  const db = useDatabase()
-  const item = db.select().from(equipment).where(eq(equipment.id, equipmentId)).get()
-  if (!item) {
-    throw createError({ statusCode: 404, statusMessage: 'Equipment not found' })
-  }
+  requireOwned(equipment, equipmentId, tenantId, 'Equipment not found')
 
+  const db = useDatabase()
   const [created] = db
     .insert(maintenances)
-    .values({ equipmentId, performedAt, description, nextDueDate, nextDueNotes })
+    .values({ tenantId, equipmentId, performedAt, description, nextDueDate, nextDueNotes })
     .returning()
     .all()
 

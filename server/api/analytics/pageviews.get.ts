@@ -1,18 +1,22 @@
-import { gte } from 'drizzle-orm'
+import { and, eq, gte } from 'drizzle-orm'
 import { useDatabase } from '../../database/client'
 import { pageViews } from '../../database/schema'
 
 const DAYS = 30
 
 export default defineEventHandler((event) => {
-  requireUser(event)
+  const { tenantId } = requireTenant(event)
 
   const start = new Date()
   start.setDate(start.getDate() - (DAYS - 1))
   const startDate = start.toISOString().slice(0, 10)
 
   const db = useDatabase()
-  const rows = db.select().from(pageViews).where(gte(pageViews.date, startDate)).all()
+  const rows = db
+    .select()
+    .from(pageViews)
+    .where(and(eq(pageViews.tenantId, tenantId), gte(pageViews.date, startDate)))
+    .all()
   const countByDate = new Map(rows.map((row: any) => [row.date, row.count]))
 
   const series = []

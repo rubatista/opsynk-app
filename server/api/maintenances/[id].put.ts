@@ -1,9 +1,9 @@
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { useDatabase } from '../../database/client'
 import { maintenances } from '../../database/schema'
 
 export default defineEventHandler(async (event) => {
-  requireUser(event)
+  const { tenantId } = requireTenant(event)
 
   const id = Number(getRouterParam(event, 'id'))
   if (!Number.isFinite(id)) {
@@ -21,17 +21,16 @@ export default defineEventHandler(async (event) => {
     updates.nextDueNotes = typeof body.nextDueNotes === 'string' ? body.nextDueNotes.trim() || null : null
   }
 
+  const existing = requireOwned(maintenances, id, tenantId, 'Maintenance not found')
+  if (!Object.keys(updates).length) return existing
+
   const db = useDatabase()
   const [updated] = db
     .update(maintenances)
     .set(updates)
-    .where(eq(maintenances.id, id))
+    .where(and(eq(maintenances.id, id), eq(maintenances.tenantId, tenantId)))
     .returning()
     .all()
-
-  if (!updated) {
-    throw createError({ statusCode: 404, statusMessage: 'Maintenance not found' })
-  }
 
   return updated
 })

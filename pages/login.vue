@@ -5,6 +5,7 @@ import BaseButton from '~/components/atoms/BaseButton/BaseButton.vue'
 definePageMeta({ layout: false })
 
 const auth = useAuthStore()
+const { data: site } = await useSiteSettings()
 const email = ref('')
 const password = ref('')
 const showPassword = ref(false)
@@ -18,9 +19,9 @@ const handleLogin = async () => {
   loading.value = false
 
   if (success) {
-    navigateTo('/backoffice/dashboard')
+    navigateTo(auth.isSuperadmin ? '/admin' : '/backoffice/dashboard')
   } else {
-    error.value = 'Email ou password incorretos.'
+    error.value = auth.loginError || 'Email ou password incorretos.'
   }
 }
 </script>
@@ -33,7 +34,8 @@ const handleLogin = async () => {
     </div>
 
     <NuxtLink to="/" class="absolute top-6 left-6 font-black tracking-tight text-gray-900">
-      OPSYNK <span class="text-brand-500">Empilhadores</span>
+      <template v-if="site?.name">{{ site.name }}</template>
+      <template v-else>OPSYNK</template>
     </NuxtLink>
 
     <div class="relative w-full max-w-md bg-white border border-gray-100 rounded-2xl shadow-xl p-8">

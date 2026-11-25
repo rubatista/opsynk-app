@@ -28,6 +28,9 @@ const max = computed(() => Math.max(1, ...currentWeek.value.map((d) => d.count))
 
 const showTable = ref(false)
 const hoveredIndex = ref<number | null>(null)
+// The hovered bar is highlighted; with nothing hovered, the busiest day is.
+const isHighlighted = (index: number, count: number) =>
+  hoveredIndex.value === null ? count > 0 && count === max.value : hoveredIndex.value === index
 
 const dayLabel = (date: string) => {
   const d = new Date(`${date}T00:00:00`)
@@ -61,17 +64,22 @@ const goNext = () => {
   <BaseCard>
     <div class="flex items-center justify-between mb-4">
       <div>
-        <p class="text-sm text-gray-500 dark:text-zinc-400">Visitas ao site</p>
-        <p class="text-3xl font-bold text-brand-500">{{ weekTotal.toLocaleString('pt-PT') }}</p>
+        <h2 class="font-bold text-ink">Visitas ao site</h2>
+        <p class="text-3xl font-bold tracking-tight text-ink mt-1">
+          {{ weekTotal.toLocaleString('pt-PT') }} <span class="text-sm font-medium text-muted">nesta semana</span>
+        </p>
       </div>
-      <button class="text-xs text-gray-400 hover:text-brand-500 transition" @click="showTable = !showTable">
+      <button
+        class="px-3 py-1.5 rounded-lg border border-line text-xs font-semibold text-muted hover:text-primary-text hover:border-primary/30 transition"
+        @click="showTable = !showTable"
+      >
         {{ showTable ? 'Ver gráfico' : 'Ver como tabela' }}
       </button>
     </div>
 
     <div v-if="!showTable && weeks.length" class="flex items-center gap-2 mb-6">
       <button
-        class="w-7 h-7 shrink-0 rounded-full border border-gray-200 dark:border-zinc-700 flex items-center justify-center text-gray-400 hover:text-brand-500 disabled:opacity-30 disabled:hover:text-gray-400 transition"
+        class="w-7 h-7 shrink-0 rounded-full border border-line flex items-center justify-center text-subtle hover:text-primary-text disabled:opacity-30 disabled:hover:text-subtle transition"
         :disabled="selectedWeek === 0"
         aria-label="Semana anterior"
         @click="goPrev"
@@ -86,7 +94,7 @@ const goNext = () => {
           v-for="(week, index) in weeks"
           :key="index"
           class="shrink-0 px-3 py-1.5 rounded-xl text-center transition"
-          :class="selectedWeek === index ? 'bg-brand-500 text-white' : 'bg-gray-50 dark:bg-zinc-800 text-gray-500 dark:text-zinc-400 hover:bg-gray-100 dark:hover:bg-zinc-700'"
+          :class="selectedWeek === index ? 'bg-primary text-white shadow-sm shadow-primary/25' : 'bg-surface-muted text-muted hover:text-ink'"
           @click="selectedWeek = index"
         >
           <span class="block text-[10px] uppercase tracking-wide opacity-80">{{ monthLabel(week[0]?.date) }}</span>
@@ -95,7 +103,7 @@ const goNext = () => {
       </div>
 
       <button
-        class="w-7 h-7 shrink-0 rounded-full border border-gray-200 dark:border-zinc-700 flex items-center justify-center text-gray-400 hover:text-brand-500 disabled:opacity-30 disabled:hover:text-gray-400 transition"
+        class="w-7 h-7 shrink-0 rounded-full border border-line flex items-center justify-center text-subtle hover:text-primary-text disabled:opacity-30 disabled:hover:text-subtle transition"
         :disabled="selectedWeek === weeks.length - 1"
         aria-label="Próxima semana"
         @click="goNext"
@@ -106,17 +114,17 @@ const goNext = () => {
       </button>
     </div>
 
-    <p v-if="loading" class="text-sm text-gray-400">A carregar...</p>
+    <p v-if="loading" class="text-sm text-subtle">A carregar...</p>
 
     <table v-else-if="showTable" class="w-full text-sm">
-      <thead class="text-left text-gray-500 dark:text-zinc-400">
+      <thead class="text-left text-muted">
         <tr>
           <th class="py-1">Data</th>
           <th class="py-1">Visitas</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="d in data" :key="d.date" class="border-t border-gray-100 dark:border-zinc-800 text-gray-900 dark:text-zinc-100">
+        <tr v-for="d in data" :key="d.date" class="border-t border-line text-ink">
           <td class="py-1">{{ shortDate(d.date) }}</td>
           <td class="py-1">{{ d.count }}</td>
         </tr>
@@ -126,7 +134,7 @@ const goNext = () => {
     <div v-else>
       <div class="relative flex gap-3 h-40 items-end">
         <div class="absolute inset-0 flex flex-col justify-between pointer-events-none">
-          <div v-for="n in 4" :key="n" class="border-t border-dashed border-gray-100 dark:border-zinc-800" />
+          <div v-for="n in 4" :key="n" class="border-t border-dashed border-line" />
         </div>
 
         <div
@@ -141,21 +149,21 @@ const goNext = () => {
         >
           <div
             v-if="hoveredIndex === index"
-            class="absolute bottom-full mb-2 px-2 py-1 rounded bg-gray-900 dark:bg-zinc-700 text-white text-xs whitespace-nowrap z-10"
+            class="absolute bottom-full mb-2 px-2.5 py-1 rounded-lg bg-ink text-surface text-xs whitespace-nowrap z-10 shadow-card"
           >
             <span class="font-semibold">{{ d.count }}</span> em {{ shortDate(d.date) }}
           </div>
 
           <div
-            class="w-full max-w-[32px] rounded-t-lg bg-brand-500 dark:bg-brand-400 transition"
-            :class="hoveredIndex === index ? 'opacity-80' : ''"
+            class="w-full max-w-[36px] rounded-t-xl transition-colors"
+            :class="isHighlighted(index, d.count) ? 'bg-primary' : 'bg-primary/25'"
             :style="{ height: `${Math.max(4, (d.count / max) * 100)}%` }"
           />
         </div>
       </div>
 
       <div class="flex gap-3 mt-2">
-        <span v-for="d in currentWeek" :key="d.date" class="flex-1 text-center text-xs text-gray-400">{{ dayLabel(d.date) }}</span>
+        <span v-for="d in currentWeek" :key="d.date" class="flex-1 text-center text-xs text-subtle">{{ dayLabel(d.date) }}</span>
       </div>
     </div>
   </BaseCard>

@@ -56,23 +56,23 @@ const removePayment = async (paymentId: number) => {
 </script>
 
 <template>
-  <div class="bg-gray-50 dark:bg-zinc-800/50 rounded-lg p-3 mt-2 space-y-3">
-    <p v-if="loading" class="text-xs text-gray-400">A carregar amortizações...</p>
+  <div class="bg-surface-muted rounded-lg p-3 mt-2 space-y-3">
+    <p v-if="loading" class="text-xs text-subtle">A carregar amortizações...</p>
     <template v-else>
-      <p v-if="!payments.length" class="text-xs text-gray-500 dark:text-zinc-400">Ainda não há amortizações registadas.</p>
+      <p v-if="!payments.length" class="text-xs text-muted">Ainda não há amortizações registadas.</p>
       <ul v-else class="space-y-1.5">
         <li v-for="p in payments" :key="p.id" class="flex items-center justify-between text-xs">
-          <span class="dark:text-zinc-200">
+          <span>
             {{ p.date }} — <span class="font-semibold">{{ formatCurrency(p.amount) }}</span>
-            <span v-if="p.notes" class="text-gray-400"> · {{ p.notes }}</span>
+            <span v-if="p.notes" class="text-subtle"> · {{ p.notes }}</span>
           </span>
-          <button class="text-red-600 hover:underline shrink-0 ml-2" @click="removePayment(p.id)">Remover</button>
+          <button class="text-danger hover:underline shrink-0 ml-2" @click="removePayment(p.id)">Remover</button>
         </li>
       </ul>
 
-      <div v-if="remaining > 0" class="pt-2 border-t border-gray-200 dark:border-zinc-700">
-        <p class="text-xs text-gray-500 dark:text-zinc-400 mb-2">
-          Em falta: <span class="font-semibold text-amber-600 dark:text-amber-400">{{ formatCurrency(remaining) }}</span>
+      <div v-if="remaining > 0" class="pt-2 border-t border-line">
+        <p class="text-xs text-muted mb-2">
+          Em falta: <span class="font-semibold text-warning">{{ formatCurrency(remaining) }}</span>
         </p>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 items-end">
           <BaseInput v-model.number="amount" label="Amortização (€)" type="number" step="0.01" :placeholder="String(remaining)" />
@@ -83,9 +83,9 @@ const removePayment = async (paymentId: number) => {
           <BaseButton variant="brand" :disabled="saving" @click="addPayment">Adicionar Amortização</BaseButton>
           <BaseButton variant="secondary" :disabled="saving" @click="payInFull">Pagar tudo ({{ formatCurrency(remaining) }})</BaseButton>
         </div>
-        <p v-if="error" class="text-xs text-red-600 dark:text-red-400 mt-2">{{ error }}</p>
+        <p v-if="error" class="text-xs text-danger mt-2">{{ error }}</p>
       </div>
-      <p v-else class="text-xs text-brand-500 font-semibold">Totalmente pago.</p>
+      <p v-else class="text-xs text-primary-text font-semibold">Totalmente pago.</p>
     </template>
   </div>
 </template>

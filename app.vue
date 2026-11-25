@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { data: settings } = await useFetch('/api/settings')
+const { data: settings } = await useSiteSettings()
 
 useSeoMeta({
   title: settings.value?.metaTitle,

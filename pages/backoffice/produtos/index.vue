@@ -4,7 +4,10 @@ import BaseBadge from '~/components/atoms/BaseBadge/BaseBadge.vue'
 
 definePageMeta({ layout: 'backoffice', title: 'Produtos' })
 
-const { data: products, refresh } = await useFetch('/api/products')
+const products = ref(await useAuthFetch<any[]>('/api/products'))
+const refresh = async () => {
+  products.value = await useAuthFetch<any[]>('/api/products')
+}
 const rentals = ref(await useAuthFetch<any[]>('/api/rentals'))
 const isRented = (productId: number) => rentals.value.some((rental) => rental.productId === productId && rental.status === 'ativo')
 
@@ -35,10 +38,10 @@ const removeProduct = async (id: number) => {
 <template>
   <div>
     <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
-      <h1 class="text-2xl font-bold dark:text-white">Produtos</h1>
+      <h1 class="text-2xl font-bold">Produtos</h1>
       <div class="flex items-center gap-3">
         <div class="relative">
-          <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-subtle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="11" cy="11" r="7" />
             <path stroke-linecap="round" d="M21 21l-4.3-4.3" />
           </svg>
@@ -46,19 +49,19 @@ const removeProduct = async (id: number) => {
             v-model="search"
             type="text"
             placeholder="Pesquisar produtos..."
-            class="w-56 sm:w-72 pl-9 pr-3 py-2 rounded-xl border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+            class="w-56 sm:w-72 pl-9 pr-3 py-2 rounded-xl border border-line bg-surface text-sm text-ink placeholder-subtle focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
         </div>
         <BaseButton to="/backoffice/produtos/novo" variant="brand">+ Novo Produto</BaseButton>
       </div>
     </div>
 
-    <p v-if="!products?.length" class="text-gray-500 dark:text-zinc-400">Ainda não há produtos.</p>
-    <p v-else-if="!filteredProducts.length" class="text-gray-500 dark:text-zinc-400">Nenhum produto encontrado para "{{ search }}".</p>
+    <p v-if="!products?.length" class="text-muted">Ainda não há produtos.</p>
+    <p v-else-if="!filteredProducts.length" class="text-muted">Nenhum produto encontrado para "{{ search }}".</p>
 
     <div v-else class="overflow-x-auto">
-      <table class="w-full bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl overflow-hidden text-sm">
-        <thead class="bg-gray-50 dark:bg-zinc-800 text-left text-gray-500 dark:text-zinc-400">
+      <table class="w-full bg-surface border border-line rounded-xl overflow-hidden text-sm">
+        <thead class="bg-surface-muted text-left text-muted">
           <tr>
             <th class="w-10"></th>
             <th class="px-4 py-3">Nome</th>
@@ -72,10 +75,10 @@ const removeProduct = async (id: number) => {
         </thead>
         <tbody>
           <template v-for="product in filteredProducts" :key="product.id">
-            <tr class="border-t border-gray-100 dark:border-zinc-800 text-gray-900 dark:text-zinc-100">
+            <tr class="border-t border-line text-ink">
               <td class="pl-4">
                 <button
-                  class="w-6 h-6 rounded-full flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-gray-100 dark:hover:bg-zinc-800 transition"
+                  class="w-6 h-6 rounded-full flex items-center justify-center text-subtle hover:text-primary-text hover:bg-surface-muted transition"
                   :aria-label="expanded === product.id ? 'Fechar detalhes' : 'Ver detalhes'"
                   @click="toggleExpanded(product.id)"
                 >
@@ -101,14 +104,14 @@ const removeProduct = async (id: number) => {
                 <span
                   v-if="product.listingType === 'aluguer'"
                   class="ml-2 text-xs"
-                  :class="isRented(product.id) ? 'text-red-500' : 'text-gray-400'"
+                  :class="isRented(product.id) ? 'text-danger' : 'text-subtle'"
                 >
                   {{ isRented(product.id) ? 'Alugado' : 'Disponível' }}
                 </span>
                 <span
                   v-else
                   class="ml-2 text-xs"
-                  :class="isSold(product.id) ? 'text-red-500' : 'text-gray-400'"
+                  :class="isSold(product.id) ? 'text-danger' : 'text-subtle'"
                 >
                   {{ isSold(product.id) ? 'Vendido' : 'Disponível' }}
                 </span>
@@ -116,39 +119,39 @@ const removeProduct = async (id: number) => {
               <td class="px-4 py-3">{{ formatCurrency(product.price) }}</td>
               <td class="px-4 py-3">{{ product.stock }}</td>
               <td class="px-4 py-3 text-right space-x-3">
-                <NuxtLink :to="`/backoffice/produtos/${product.id}`" class="text-brand-500 hover:underline">
+                <NuxtLink :to="`/backoffice/produtos/${product.id}`" class="text-primary-text hover:underline">
                   Ver
                 </NuxtLink>
-                <NuxtLink :to="`/backoffice/produtos/${product.id}/editar`" class="text-brand-500 hover:underline">
+                <NuxtLink :to="`/backoffice/produtos/${product.id}/editar`" class="text-primary-text hover:underline">
                   Editar
                 </NuxtLink>
-                <button class="text-red-600 hover:underline" @click="removeProduct(product.id)">
+                <button class="text-danger hover:underline" @click="removeProduct(product.id)">
                   Apagar
                 </button>
               </td>
             </tr>
-            <tr v-if="expanded === product.id" class="border-t border-gray-100 dark:border-zinc-800 bg-gray-50/60 dark:bg-zinc-800/30">
+            <tr v-if="expanded === product.id" class="border-t border-line bg-surface-muted">
               <td colspan="8" class="px-4 py-4">
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
                   <div>
-                    <p class="text-xs text-gray-500 dark:text-zinc-400">Capacidade</p>
-                    <p class="text-gray-900 dark:text-white">{{ product.capacityKg ? `${product.capacityKg} kg` : '—' }}</p>
+                    <p class="text-xs text-muted">Capacidade</p>
+                    <p class="text-ink">{{ product.capacityKg ? `${product.capacityKg} kg` : '—' }}</p>
                   </div>
                   <div>
-                    <p class="text-xs text-gray-500 dark:text-zinc-400">Ano</p>
-                    <p class="text-gray-900 dark:text-white">{{ product.year || '—' }}</p>
+                    <p class="text-xs text-muted">Ano</p>
+                    <p class="text-ink">{{ product.year || '—' }}</p>
                   </div>
                   <div>
-                    <p class="text-xs text-gray-500 dark:text-zinc-400">Energia</p>
-                    <p class="text-gray-900 dark:text-white">{{ product.energyType || '—' }}</p>
+                    <p class="text-xs text-muted">Energia</p>
+                    <p class="text-ink">{{ product.energyType || '—' }}</p>
                   </div>
                   <div>
-                    <p class="text-xs text-gray-500 dark:text-zinc-400">Imagens</p>
-                    <p class="text-gray-900 dark:text-white">{{ product.images?.length || 0 }}</p>
+                    <p class="text-xs text-muted">Imagens</p>
+                    <p class="text-ink">{{ product.images?.length || 0 }}</p>
                   </div>
                   <div class="col-span-2 sm:col-span-4">
-                    <p class="text-xs text-gray-500 dark:text-zinc-400">Descrição</p>
-                    <p class="text-gray-900 dark:text-white whitespace-pre-wrap">{{ product.description || '—' }}</p>
+                    <p class="text-xs text-muted">Descrição</p>
+                    <p class="text-ink whitespace-pre-wrap">{{ product.description || '—' }}</p>
                   </div>
                 </div>
               </td>

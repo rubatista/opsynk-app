@@ -1,9 +1,9 @@
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { useDatabase } from '../../database/client'
 import { documents } from '../../database/schema'
 
 export default defineEventHandler((event) => {
-  requireUser(event)
+  const { tenantId } = requireTenant(event)
 
   const id = Number(getRouterParam(event, 'id'))
   if (!Number.isFinite(id)) {
@@ -11,7 +11,11 @@ export default defineEventHandler((event) => {
   }
 
   const db = useDatabase()
-  const [deleted] = db.delete(documents).where(eq(documents.id, id)).returning().all()
+  const [deleted] = db
+    .delete(documents)
+    .where(and(eq(documents.id, id), eq(documents.tenantId, tenantId)))
+    .returning()
+    .all()
 
   if (!deleted) {
     throw createError({ statusCode: 404, statusMessage: 'Document not found' })

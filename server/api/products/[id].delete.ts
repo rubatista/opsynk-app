@@ -1,11 +1,11 @@
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { unlink } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { useDatabase } from '../../database/client'
 import { products, productImages } from '../../database/schema'
 
 export default defineEventHandler(async (event) => {
-  requireUser(event)
+  const { tenantId } = requireTenant(event)
 
   const id = Number(getRouterParam(event, 'id'))
   if (!Number.isFinite(id)) {
@@ -13,9 +13,17 @@ export default defineEventHandler(async (event) => {
   }
 
   const db = useDatabase()
-  const images = db.select().from(productImages).where(eq(productImages.productId, id)).all()
+  const images = db
+    .select()
+    .from(productImages)
+    .where(and(eq(productImages.productId, id), eq(productImages.tenantId, tenantId)))
+    .all()
 
-  const [deleted] = db.delete(products).where(eq(products.id, id)).returning().all()
+  const [deleted] = db
+    .delete(products)
+    .where(and(eq(products.id, id), eq(products.tenantId, tenantId)))
+    .returning()
+    .all()
 
   if (!deleted) {
     throw createError({ statusCode: 404, statusMessage: 'Product not found' })

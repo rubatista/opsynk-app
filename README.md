@@ -1,5 +1,41 @@
 # 📦 Opsynk App
 
+## 🏢 Multi-empresa
+
+Cada cliente (stand, oficina, loja de motas…) é uma **empresa** (`tenants`). Todas as tabelas têm `tenant_id` e todas as queries filtram por ele.
+
+| Quem | Onde | O quê |
+| --- | --- | --- |
+| Dono da plataforma (`role: superadmin`) | `/admin` | Cria empresas, tipos de negócio, módulos, estado (ativo/suspenso), utilizadores e reposição de passwords |
+| Utilizadores da empresa | `/backoffice` | Só veem os dados da própria empresa (a empresa vem do login, nunca do pedido) |
+| Público | `<slug>.<domínio base>` ou domínio próprio | Site da empresa: produtos, contactos (`/api/site/*`) |
+
+### Arrancar em dev
+
+```bash
+npm run db:migrate
+npm run db:seed
+npm run dev
+```
+
+Contas do seed (password `password123`):
+
+- `admin@opsynk.com` → `/admin`
+- `demo@opsynk.com` → empresa "Opsynk Empilhadores", site em http://demo.localhost:3000 (e em `localhost`)
+- `stand@opsynk.com` → empresa "Stand Exemplo", site em http://stand-exemplo.localhost:3000
+
+### Configuração (env)
+
+- `NUXT_JWT_SECRET`: obrigatório em produção.
+- `NUXT_PUBLIC_SITE_BASE_DOMAIN`: domínio base dos sites, por exemplo `opsynk.pt`, o que dá `standx.opsynk.pt`. Por defeito é `localhost`.
+- `NUXT_DEFAULT_SITE_SLUG`: empresa servida quando o host não corresponde a nenhuma. Por defeito é `demo` em dev e vazio em produção.
+
+### Regras para código novo
+
+- **Endpoint do backoffice:** usa `const { tenantId } = requireTenant(event)` e filtra todas as queries por `tenantId`.
+- **Ids recebidos no body** (clientId, productId…): valida-os com `ownedIdOrNull` ou `requireOwned` (em `server/utils/tenant.ts`).
+- **Endpoint público:** vai em `server/api/site/` e usa `resolveSiteTenant(event)`. No frontend chama-se com `useSiteFetch`.
+
 ## 🧭 Plano: Estrutura Frontoffice / Backoffice + Backend
 
 ### 📌 Estado atual
